@@ -1,24 +1,101 @@
-import logo from './logo.svg';
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom"; 
+import { useState } from "react";
 import './App.css';
+import Recompensas from "./components/Recompensas";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import PerfilUsuario from "./components/PerfilUsuario";
+import EditarUsuario from "./components/EditarUsuario";
+import Chats from "./components/Chats";
+import Tareas from "./components/Tareas";
+import LlamadaVideo from "./components/Videollamada";
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+
+
+    /* 
+    <div>
+      {isAuthenticated ? (
+        <Recompensas />
+      ) : (
+        <Login onLogin={() => setIsAuthenticated(true)} />
+      )}
     </div>
+    
+    */
+
+
+
+    /*Toda esta parte de la etiqueta de router es para mostrar las ventanas al profe a partir del slash*/
+     <Router>
+      <Routes>
+        {/* Login */}
+        {/* Redirección desde "/" a "/login" */}
+        <Route path="/" element={<Navigate to="/login" />} />
+
+        {/* Ruta para el Login */}
+        <Route path="/login" element={<Login />} />
+        
+        
+        {/*Recompensas */}
+        <Route 
+          path="/recompensas" 
+          element={<Recompensas />} 
+        />
+
+        {/* Register */}
+        <Route 
+          path="/register" 
+          element={<Register />} 
+        />
+
+         {/* PerfilUsuario */}
+        
+        <Route 
+          path="/PerfilUsuario" 
+          element={
+            <PerfilUsuario 
+              user={{
+                avatar: "https://sm.ign.com/t/ign_latam/cover/h/harry-pott/harry-potter-the-series_eh1b.300.jpg",
+                name: "Harry Potter",
+                house: "Gryffindor",
+                role: "Estudiante",
+                bio: "Soy un Gryffindor, conocido por mi valentía y lealtad, siempre dispuesto a enfrentar lo imposible por aquellos que amo, y fui el único que logró sobrevivir al ataque de Lord Voldemort cuando era un bebé",
+                rewards: ["Valentía", "Lealtad"]
+              }} 
+            />
+          } 
+        />
+
+          {/* Editar Usuario */}
+          <Route 
+          path="/EditarUsuario" 
+          element={<EditarUsuario />} 
+        />
+         
+         {/* Chats */}
+         <Route 
+          path="/chats" 
+          element={<Chats />} 
+        />
+
+          {/* Tareas */}
+          <Route 
+          path="/tareas" 
+          element={<Tareas />} 
+        />
+
+          {/* VideoLLamada */}
+          <Route 
+          path="/videollamada" 
+          element={<LlamadaVideo />} 
+        />
+      </Routes>
+    </Router>
   );
 }
 

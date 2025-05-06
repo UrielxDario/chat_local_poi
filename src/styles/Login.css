@@ -1,0 +1,137 @@
+/* Estilos generales del contenedor del login */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('../assets/imagenes/FondoLogin.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .login-box {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0px 0px 15px rgba(255, 215, 0, 0.5);
+  }
+  
+  .welcome-text {
+    font-size: 1.8rem;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  
+  .site-title {
+    font-family: 'HARRYPFUENTE', serif;
+    font-size: 4rem;
+    color: #d4af37;
+    text-shadow: 2px 2px 5px rgba(212, 175, 55, 0.6);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Efecto de resplandor al pasar el cursor sobre el título */
+  .site-title:hover {
+    color: #ffeb8a;
+    text-shadow: 0px 0px 15px rgba(255, 215, 0, 0.9), 0px 0px 30px rgba(255, 223, 150, 0.7);
+    transform: scale(1.05);
+  }
+  
+  .slogan {
+    font-size: 1.2rem;
+    color: #f0e68c;
+    margin-bottom: 20px;
+  }
+  
+  .login-title {
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.2rem;
+    background-color: transparent;
+    border: 2px solid #d4af37;
+    color: #fff;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .input-field:focus {
+    box-shadow: 0px 0px 15px rgba(255, 215, 0, 0.9);
+    border-color: #ffeb8a;
+  }
+  
+  .btn-login {
+    font-family: 'HARRYPFUENTE', serif;
+
+    width: 100%;
+    padding: 10px;
+    font-size: 2.5rem;
+    background-color: #d4af37;
+    color: #000;
+    border: 2px solid #b8860b;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .btn-login:hover {
+    background-color: #ffcc00;
+    box-shadow: 0px 0px 15px rgba(255, 223, 0, 0.9);
+  }
+  
+  .register-text {
+    color: #fff;
+    margin-top: 15px;
+  }
+  
+  .btn-register {
+    font-family: 'HARRYPFUENTE', serif;
+
+    width: 100%;
+    padding: 10px;
+    font-size: 2.5rem;
+    background-color: #add8e6;
+    color: #000;
+    border: 2px solid #87cefa;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .link-button {
+    display: block; 
+    text-decoration: none; 
+    color: inherit; 
+    height: 100%; 
+    width: 100%; 
+    padding: 10px;
+  }
+  
+  .btn-register:hover {
+    background-color: #f0f8ff;
+    box-shadow: 0px 0px 15px rgba(173, 216, 230, 0.9);
+  }
+  
+
+
+  .welcome-text,
+.login-title, .register-text {
+  font-family: "Times New Roman", serif;
+  font-size: 1.7rem;
+
+}
+
+
+.slogan
+ {
+    font-family: "Times New Roman", serif;
+    font-size: 1.3rem;
+    font-style: italic;
+
+
+  }
+  

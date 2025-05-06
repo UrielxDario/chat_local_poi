@@ -1,0 +1,16 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('../assets/imagenes/FondoLogin.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+
+  .encabezado{
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 30px;
+    color: rgb(201, 197, 8);
+    font-weight: bold;
+  }

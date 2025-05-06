@@ -1,0 +1,214 @@
+
+.boton-magico {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out  !important; 
+  }
+
+  .boton-magico:hover {
+    color: #fff;
+    text-shadow: 0px 0px 10px rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 15px rgba(255, 223, 0, 0.8);
+    transform: scale(1.1);
+  }
+
+  .boton-magico::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
+    border-radius: 5px;
+    box-shadow: 0px 0px 15px rgba(255, 223, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .boton-magico:hover::before {
+    opacity: 1;
+  }
+
+
+   .usuario-titulo {
+    background-color: #8b6f43 !important; 
+    color: #fff !important; 
+    border: 2px solid #c5a678 !important; 
+    }
+    .usuario-titulo:hover {
+    background-color: #c5a678 !important; 
+    box-shadow: 0px 0px 10px rgba(255, 223, 150, 0.8) !important;
+    }
+
+
+/* Estilo del título "TheWizardingCircle"  */
+.magic-title {
+color: #d4af37 !important; 
+    font-weight: bold;
+text-shadow: 2px 2px 5px rgba(212, 175, 55, 0.6);
+transition: all 0.3s ease-in-out;
+}
+
+/* Efecto resplandor en hover */
+.magic-title:hover {
+color: #ffeb8a !important; 
+text-shadow: 0px 0px 15px rgba(255, 215, 0, 0.9), 
+            0px 0px 30px rgba(255, 223, 150, 0.7) !important; 
+transform: scale(1.017);
+}
+
+
+
+
+
+/* Fuente Harry Potter */
+@font-face {
+  font-family: 'HARRYPFUENTE';
+  src: url('../assets/fonts/HARRYP_.TTF') format('truetype'); 
+  font-weight: normal;
+  font-style: normal;
+}
+
+ .navbar-brand, .dropdown-item, .navbar-nav, .navbar-toggler {
+  font-family: 'HARRYPFUENTE', serif;
+  font-size: 2.5rem; 
+}
+
+.dropdown-item, .navbar-nav, .navbar-toggler {
+  font-family: 'HARRYPFUENTE', serif;
+  font-size: 1.5rem; 
+}
+
+.navbar-brand {
+  font-size: 4.5rem !important; 
+  text-align: center; 
+  margin: 0 auto;  
+  flex-grow: 1; 
+  cursor: pointer; 
+
+}
+
+button.usuario-titulo {
+  font-size: 2.5rem; 
+  font-family: 'HARRYPFUENTE', serif; 
+  margin-left: 20px; 
+}
+
+h2.text-light {
+  font-family: 'HARRYPFUENTE', serif;
+  font-size: 4rem; 
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  background-image: url('../assets/imagenes/bark_willow_diff_2k.jpg');
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat; 
+  padding: 0 20px; 
+  position: relative; 
+}
+
+.navbar .dropdown {
+  position: absolute; 
+  right: 20px; 
+  z-index: 1; 
+}
+
+.navbar{
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  width: 100%;
+}
+
+/*Hasta aqui, de aqui para arriba es todo lo de la navbar*/
+
+
+
+
+.bg-dark-custom {
+  background-color: #6d0b0b; 
+}
+
+
+/* Recompensas */
+.card {
+  background-color: #5b6268 !important; 
+  border-radius: 15px;
+  padding: 20px;
+}
+
+.card-title {
+  font-family: 'HARRYPFUENTE', serif;
+  font-size: 2.5rem; 
+  color: #f7c800;
+}
+
+
+
+/* Botón Recompensa */
+.boton-recompensa {
+  font-family: 'HARRYPFUENTE', serif; 
+  font-size: 2rem;
+  background-color: #f7c800; 
+  color: #000000; 
+  border: 2px solid #dcb72f; 
+  transition: all 0.3s ease-in-out; 
+}
+
+.boton-recompensa:hover {
+  background-color: #e4b200; 
+  box-shadow: 0px 0px 25px rgba(255, 223, 0, 1); 
+  text-shadow: 0px 0px 10px rgba(255, 223, 0, 0.8);
+  transform: scale(1.05);
+}
+
+.boton-recompensa:focus {
+  outline: none;
+}
+
+
+
+.recompensa-imagen {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;  
+  border-radius: 5px; 
+}
+
+.tarea-titulo {
+  font-family: 'HARRYPFUENTE', serif; 
+  font-size: 3rem; 
+}
+
+.recompensa-texto {
+  font-family: 'HARRYPFUENTE', serif; 
+  font-size: 2rem; 
+  color: #f0f0f0; 
+}
+
+
+
+/* Barra de progreso */
+.progreso-barra {
+  height: 10px;
+  background-color: #f0f0f0; 
+  border-radius: 5px; 
+}
+
+.progreso-avance {
+  background-color: #71adec; 
+  border-radius: 5px;
+  height: 100%; 
+
+}
+
+.medidor-recompensa {
+  font-family: 'HARRYPFUENTE', serif; 
+  font-size: 1.5rem;
+  color: #f0f0f0; 
+  margin-top: 5px;
+}

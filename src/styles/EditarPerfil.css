@@ -1,0 +1,236 @@
+/* Componente de Editar Perfil */
+
+
+
+.boton-magico {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out  !important; 
+}
+
+.boton-magico:hover {
+  color: #fff;
+  text-shadow: 0px 0px 10px rgba(255, 255, 255, 1);
+  box-shadow: 0px 0px 15px rgba(255, 223, 0, 0.8);
+  transform: scale(1.1);
+}
+
+.boton-magico::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  width: calc(100% + 10px);
+  height: calc(100% + 10px);
+  border-radius: 5px;
+  box-shadow: 0px 0px 15px rgba(255, 223, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.boton-magico:hover::before {
+  opacity: 1;
+}
+
+
+ .usuario-titulo {
+  background-color: #8b6f43 !important; 
+  color: #fff !important; 
+  border: 2px solid #c5a678 !important; 
+  }
+  .usuario-titulo:hover {
+  background-color: #c5a678 !important; 
+  box-shadow: 0px 0px 10px rgba(255, 223, 150, 0.8) !important;
+  }
+
+
+/* Estilo del título "TheWizardingCircle"  */
+.magic-title {
+color: #d4af37 !important; 
+  font-weight: bold;
+text-shadow: 2px 2px 5px rgba(212, 175, 55, 0.6);
+transition: all 0.3s ease-in-out;
+}
+
+/* Efecto resplandor en hover */
+.magic-title:hover {
+color: #ffeb8a !important; 
+text-shadow: 0px 0px 15px rgba(255, 215, 0, 0.9), 
+          0px 0px 30px rgba(255, 223, 150, 0.7) !important; 
+transform: scale(1.017);
+}
+
+
+
+
+
+/* Fuente Harry Potter */
+@font-face {
+font-family: 'HARRYPFUENTE';
+src: url('../assets/fonts/HARRYP_.TTF') format('truetype'); 
+font-weight: normal;
+font-style: normal;
+}
+
+.navbar-brand, .dropdown-item, .navbar-nav, .navbar-toggler {
+font-family: 'HARRYPFUENTE', serif;
+font-size: 2.5rem; 
+}
+
+.dropdown-item, .navbar-nav, .navbar-toggler {
+font-family: 'HARRYPFUENTE', serif;
+font-size: 1.5rem; 
+}
+
+.navbar-brand {
+font-size: 4.5rem !important; 
+text-align: center; 
+margin: 0 auto;  
+flex-grow: 1; 
+cursor: pointer; 
+
+}
+
+button.usuario-titulo {
+font-size: 2.5rem; 
+font-family: 'HARRYPFUENTE', serif; 
+margin-left: 20px; 
+}
+
+h2.text-light {
+font-family: 'HARRYPFUENTE', serif;
+font-size: 4rem; 
+}
+
+.navbar {
+display: flex;
+justify-content: space-between; 
+align-items: center;
+background-image: url('../assets/imagenes/bark_willow_diff_2k.jpg');
+background-size: cover; 
+background-position: center;
+background-repeat: no-repeat; 
+padding: 0 20px; 
+position: relative; 
+}
+
+.navbar .dropdown {
+position: absolute; 
+right: 20px; 
+z-index: 1; 
+}
+
+.navbar{
+display: flex;
+justify-content: space-between; 
+align-items: center;
+width: 100%;
+}
+
+/*Hasta aqui, de aqui para arriba es todo lo de la navbar*/
+
+
+
+
+
+
+.perfil-usuario {
+    font-family: 'HARRYPFUENTE', serif;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    padding: 24px;
+    background-image: url('../assets/imagenes/FondoLogin.jpg');
+    color: white;
+    min-height: 100vh;
+  }
+  
+  .perfil-contenedor {
+    max-width: 600px;
+    width: 100%;
+    background-color: #b30000c5;
+    border: 2px solid yellow;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+  }
+  
+  .perfil-avatar {
+    width: 128px;
+    height: 128px;
+    border: 4px solid yellow;
+    border-radius: 50%;
+    
+  }
+  
+  .perfil-detalles {
+    color: yellow;
+    font-size: 25px;
+    margin-top: 16px;
+  }
+  
+  input[type="text"],
+  input[type="date"],
+  input[type="file"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 5px;
+    border: 1px solid yellow;
+    background-color: #333;
+    color: white;
+    
+  }
+  
+  input[type="file"],
+  select
+  {
+    cursor: pointer;
+  }
+  
+  button {
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  
+  button:hover {
+    background-color: #cc9900;
+  }
+  .boton-magico {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out  !important; 
+  }
+  
+  .boton-magico:hover {
+    color: #fff;
+    text-shadow: 0px 0px 10px rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 15px rgba(255, 223, 0, 0.8);
+    transform: scale(1.1);
+  }
+  
+  .boton-magico::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
+    border-radius: 5px;
+    box-shadow: 0px 0px 15px rgba(255, 223, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .boton-magico:hover::before {
+    opacity: 1;
+  }
