@@ -26,7 +26,7 @@ const upload = multer({ storage });
 router.post("/verificar-correo", (req, res) => {
   const { Correo_Usu } = req.body;
 
-  const sql = "SELECT * FROM Usuario WHERE Correo_Usu = ?";
+  const sql = "SELECT * FROM usuario WHERE Correo_Usu = ?";
   db.query(sql, [Correo_Usu], (err, results) => {
     if (err) {
       console.error("Error al verificar el correo:", err);
@@ -61,7 +61,7 @@ router.post("/register", upload.single("avatar"), (req, res) => {
   const Avatar_Usu = req.file ? `/uploads/${req.file.filename}` : null;
 
   const sql = `
-    INSERT INTO Usuario 
+    INSERT INTO usuario 
     (Username, Correo_Usu, Contra_Usu, FechaNacimiento_Usu, Casa_Usu, Rol_Usu, Avatar_Usu, TextoBiografia_Usu) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
@@ -83,7 +83,7 @@ router.post("/register", upload.single("avatar"), (req, res) => {
         console.error("Error al insertar:", err);
         res.status(500).json({ error: "Error al registrar usuario" });
       } else {
-        res.status(200).json({ message: "Usuario registrado exitosamente" });
+        res.status(200).json({ message: "usuario registrado exitosamente" });
       }
     }
   );
