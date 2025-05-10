@@ -9,7 +9,7 @@ router.post('/crear-chat', async (req, res) => {
   try {
     // 1. Obtener ID del usuario actual por correo
     const [usuarioActual] = await conexion.promise().query(
-      "SELECT ID_Usuario FROM Usuario WHERE Correo_usu = ?",
+      "SELECT ID_Usuario FROM usuario WHERE Correo_usu = ?",
       [correoUsuario]
     );
 
@@ -65,7 +65,7 @@ router.get('/obtener-chats', async (req, res) => {
   try {
     // Obtener ID del usuario actual por correo
     const [usuarioActual] = await conexion.promise().query(
-      "SELECT ID_Usuario FROM Usuario WHERE Correo_usu = ?",
+      "SELECT ID_Usuario FROM usuario WHERE Correo_usu = ?",
       [correoUsuario]
     );
 
@@ -80,7 +80,7 @@ router.get('/obtener-chats', async (req, res) => {
         SELECT c.ID_Chat, u.Username, u.Avatar_usu
         FROM chat c
         JOIN Chat_Usuario cu ON c.ID_Chat = cu.ID_Chat
-        JOIN Usuario u ON cu.ID_Usuario = u.ID_Usuario
+        JOIN usuario u ON cu.ID_Usuario = u.ID_Usuario
         WHERE cu.ID_Usuario != ? AND c.ID_Chat IN (
             SELECT ID_Chat
             FROM Chat_Usuario
@@ -113,7 +113,7 @@ router.get('/obtener-chats', async (req, res) => {
 router.get("/obtener-usuario/:correoUsuario", (req, res) => {
     const correoUsuario = req.params.correoUsuario;  // Cambié correoUsuario por Correo_Usu
   
-    const sql = "SELECT * FROM Usuario WHERE Correo_Usu = ?";
+    const sql = "SELECT * FROM usuario WHERE Correo_Usu = ?";
     conexion.promise().query(sql, [correoUsuario], (err, results) => {
       if (err) {
         console.error("Error al verificar el correo:", err);
@@ -141,7 +141,7 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
           u.Avatar_usu,
           u.ID_Usuario
         FROM Mensaje m
-        JOIN Usuario u ON m.ID_Usuario = u.ID_Usuario
+        JOIN usuario u ON m.ID_Usuario = u.ID_Usuario
         WHERE m.ID_Chat = ?
         ORDER BY m.HoraFecha_Mensaje ASC
       `, [idChat]);
@@ -157,7 +157,7 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
     const { emailCliente, idVendedor } = req.body;
   
     try {
-      const [cliente] = await conexion.promise().query("SELECT ID_Usuario FROM Usuario WHERE Correo_Usu = ?", [emailCliente]);
+      const [cliente] = await conexion.promise().query("SELECT ID_Usuario FROM usuario WHERE Correo_Usu = ?", [emailCliente]);
       const idCliente = cliente[0].ID_Usuario;
   
       // Buscar chat existente
