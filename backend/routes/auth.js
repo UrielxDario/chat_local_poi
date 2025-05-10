@@ -95,7 +95,7 @@ router.post('/login', (req, res) => {
   console.log('Solicitud recibida', req.body);
   const { Correo_Usu, Contra_Usu } = req.body;
 
-  const query = 'SELECT * FROM Usuario WHERE Correo_Usu = ?';
+  const query = 'SELECT * FROM usuario WHERE Correo_Usu = ?';
   db.query(query, [Correo_Usu], (err, results) => {
     if (err) {
       console.error('Error en la consulta:', err);
