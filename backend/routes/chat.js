@@ -24,8 +24,8 @@ router.post('/crear-chat', async (req, res) => {
     const [chatsExistentes] = await conexion.promise().query(`
       SELECT c.ID_Chat
       FROM chat c
-      JOIN Chat_Usuario p1 ON c.ID_Chat = p1.ID_Chat
-      JOIN Chat_Usuario p2 ON c.ID_Chat = p2.ID_Chat
+      JOIN chat_usuario p1 ON c.ID_Chat = p1.ID_Chat
+      JOIN chat_usuario p2 ON c.ID_Chat = p2.ID_Chat
       WHERE c.EsGrupo = 0
         AND p1.ID_Usuario = ?
         AND p2.ID_Usuario = ?
@@ -46,7 +46,7 @@ router.post('/crear-chat', async (req, res) => {
 
     // 4. Insertar ambos usuarios como participantes
     await conexion.promise().query(
-      "INSERT INTO Chat_Usuario (ID_Chat, ID_Usuario) VALUES (?, ?), (?, ?)",
+      "INSERT INTO chat_usuario (ID_Chat, ID_Usuario) VALUES (?, ?), (?, ?)",
       [idNuevoChat, idActual, idNuevoChat, idOtro]
     );
 
@@ -79,11 +79,11 @@ router.get('/obtener-chats', async (req, res) => {
     const [chats] = await conexion.promise().query(`
         SELECT c.ID_Chat, u.Username, u.Avatar_usu
         FROM chat c
-        JOIN Chat_Usuario cu ON c.ID_Chat = cu.ID_Chat
+        JOIN chat_usuario cu ON c.ID_Chat = cu.ID_Chat
         JOIN usuario u ON cu.ID_Usuario = u.ID_Usuario
         WHERE cu.ID_Usuario != ? AND c.ID_Chat IN (
             SELECT ID_Chat
-            FROM Chat_Usuario
+            FROM chat_usuario
             WHERE ID_Usuario = ?
         )
         ORDER BY c.Fecha_Creacion DESC
@@ -140,7 +140,7 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
           u.Username,
           u.Avatar_usu,
           u.ID_Usuario
-        FROM Mensaje m
+        FROM mensaje m
         JOIN usuario u ON m.ID_Usuario = u.ID_Usuario
         WHERE m.ID_Chat = ?
         ORDER BY m.HoraFecha_Mensaje ASC
@@ -162,7 +162,7 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
   
       // Buscar chat existente
       const [chatExistente] = await conexion.promise().query(`
-        SELECT * FROM Chat WHERE ID_Cliente = ? AND ID_Vendedor = ?
+        SELECT * FROM chat WHERE ID_Cliente = ? AND ID_Vendedor = ?
       `, [idCliente, idVendedor]);
   
       if (chatExistente.length > 0) {
@@ -171,12 +171,12 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
   
       // Crear nuevo chat si no existe
       const [nuevoChat] = await conexion.promise().query(`
-        INSERT INTO Chat (ID_Cliente, ID_Vendedor, FechaInicio)
+        INSERT INTO chat (ID_Cliente, ID_Vendedor, FechaInicio)
         VALUES (?, ?, NOW())
       `, [idCliente, idVendedor]);
   
       const [chatCreado] = await conexion.promise().query(`
-        SELECT * FROM Chat WHERE ID_Chat = ?
+        SELECT * FROM chat WHERE ID_Chat = ?
       `, [nuevoChat.insertId]);
   
       return res.json(chatCreado[0]);
@@ -191,7 +191,7 @@ router.post("/send-message", (req, res) => {
     const { ID_Chat, ID_Usuario, TextoMensaje } = req.body;
   
     const sql = `
-      INSERT INTO Mensaje (ID_Chat, ID_Usuario, TextoMensaje)
+      INSERT INTO mensaje (ID_Chat, ID_Usuario, TextoMensaje)
       VALUES (?, ?, ?)
     `;
   
@@ -202,7 +202,7 @@ router.post("/send-message", (req, res) => {
       }
   
     const messageId = result.insertId;
-    const sqlGetMessage = `SELECT * FROM Mensaje WHERE ID_Mensaje = ?`;
+    const sqlGetMessage = `SELECT * FROM mensaje WHERE ID_Mensaje = ?`;
     conexion.query(sqlGetMessage, [messageId], (err, rows) => {
       if (err) {
         console.error("Error al obtener mensaje:", err);
