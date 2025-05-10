@@ -66,7 +66,7 @@ const cerrarSesion = () => {
     if (mostrarModal) {
       const correoUsuario = localStorage.getItem("correo");
   
-      fetch(`http://localhost:3000/api/usuarios-disponibles/${correoUsuario}?esGrupal=${esGrupal}`)
+      fetch(`https://poi-back-igd5.onrender.com/api/usuarios-disponibles/${correoUsuario}?esGrupal=${esGrupal}`)
         .then((res) => res.json())
         .then((data) => {
           setUsuariosDisponibles(data);
@@ -78,7 +78,7 @@ const cerrarSesion = () => {
   useEffect(() => {
     const correoUsuario = localStorage.getItem("correo");
     if (correoUsuario) {
-      fetch(`http://localhost:3000/api/obtener-usuario/${correoUsuario}`)
+      fetch(`https://poi-back-igd5.onrender.com/api/obtener-usuario/${correoUsuario}`)
   .then((res) => {
     if (res.ok) {
       return res.json(); // Solo procesar como JSON si la respuesta es exitosa
@@ -129,7 +129,7 @@ const cerrarSesion = () => {
     }
   
     try {
-      const response = await fetch("http://localhost:3000/crear-chat", {
+      const response = await fetch("https://poi-back-igd5.onrender.com/crear-chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -164,7 +164,7 @@ const cerrarSesion = () => {
     // Solicitar los chats al backend
     const fetchChats = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/obtener-chats?correoUsuario=${correoUsuario}`, {
+        const response = await fetch(`https://poi-back-igd5.onrender.com/obtener-chats?correoUsuario=${correoUsuario}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -189,7 +189,7 @@ const cerrarSesion = () => {
   useEffect(() => {
     if (selectedContact?.ID_Chat) {
       // Si hay un contacto seleccionado y tiene un ID de chat válido, obtenemos los mensajes
-      fetch(`http://localhost:3000/api/obtener-mensajes/${selectedContact.ID_Chat}`)
+      fetch(`https://poi-back-igd5.onrender.com/api/obtener-mensajes/${selectedContact.ID_Chat}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.mensajes) {
@@ -212,7 +212,7 @@ const cerrarSesion = () => {
   
     if (!messagesByChat[contact.ID_Chat]) {
       try {
-        const response = await fetch(`http://localhost:3000/obtener-mensajes/${contact.ID_Chat}`);
+        const response = await fetch(`https://poi-back-igd5.onrender.com/obtener-mensajes/${contact.ID_Chat}`);
         const data = await response.json();
   
         if (response.ok) {
@@ -232,7 +232,7 @@ const cerrarSesion = () => {
     if (!messageText.trim() || !selectedContact) return;
   
     try {
-      const response = await fetch("http://localhost:3000/send-message", {
+      const response = await fetch("https://poi-back-igd5.onrender.com/send-message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -316,7 +316,7 @@ const cerrarSesion = () => {
           ) : (
             contacts.map((contact, index) => (
               <div key={index} className="flex bg-red-900 rounded-lg p-4 mb-4 hover:bg-red-800 transition-colors duration-200" onClick={() => handleSelectContact(contact)}>
-                <img src={`http://localhost:3000${contact.img}`} className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mr-4 border-2 border-yellow-300" alt={contact.name} />
+                <img src={`https://poi-back-igd5.onrender.com${contact.img}`} className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mr-4 border-2 border-yellow-300" alt={contact.name} />
                 <div className="w-full overflow-hidden">
                   <div className="flex mb-1">
                     <a className="flex-grow text-yellow-200 hover:text-yellow-400 transition-colors duration-200 font-medium cursor-pointer">{contact.name}</a>
@@ -340,7 +340,7 @@ const cerrarSesion = () => {
               <img
                 src={
                   selectedContact
-                    ? `http://localhost:3000${selectedContact.img}`
+                    ? `https://poi-back-igd5.onrender.com${selectedContact.img}`
                     : '/default-avatar.png'
                 }
                 
@@ -364,7 +364,7 @@ const cerrarSesion = () => {
             console.log(messagesByChat); // Esto debería mostrar el mensaje en consola
             return (
               <div key={index} className={`flex mb-12 ${messagesByChat.sent ? "flex-row-reverse" : ""}`}>
-                <img src={`http://localhost:3000${messagesByChat.Avatar_usu}`} className="w-10 h-10 rounded-full" alt="User avatar" />
+                <img src={`https://poi-back-igd5.onrender.com${messagesByChat.Avatar_usu}`} className="w-10 h-10 rounded-full" alt="User avatar" />
                 <div className="bg-white rounded-lg p-4 max-w-xs shadow">
                   <p>{messagesByChat.TextoMensaje}</p> {/* Asegúrate de que message.text no esté vacío */}
                 </div>
