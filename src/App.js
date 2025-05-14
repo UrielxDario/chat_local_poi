@@ -9,6 +9,8 @@ import EditarUsuario from "./components/EditarUsuario";
 import Chats from "./components/Chats";
 import Tareas from "./components/Tareas";
 import LlamadaVideo from "./components/Videollamada";
+import VideoCall from './components/Videollamada';
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -17,16 +19,7 @@ function App() {
 
 
 
-    /* 
-    <div>
-      {isAuthenticated ? (
-        <Recompensas />
-      ) : (
-        <Login onLogin={() => setIsAuthenticated(true)} />
-      )}
-    </div>
-    
-    */
+  
 
 
 
@@ -94,6 +87,14 @@ function App() {
           path="/videollamada" 
           element={<LlamadaVideo />} 
         />
+
+
+        {/* Videollamada con Stream */}
+        <Route 
+          path="/stream-call" 
+          element={<VideoCall />} 
+        />
+
       </Routes>
     </Router>
   );
