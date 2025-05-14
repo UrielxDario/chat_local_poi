@@ -21,7 +21,7 @@ router.get("/usuarios-disponibles/:correo", (req, res) => {
     }
 
     const idUsuario = result[0].ID_Usuario;
-
+      //hola
     if (esGrupal) {
       const queryGrupal = `
         SELECT ID_Usuario, Username
