@@ -9,12 +9,12 @@ import dobbyImg from "../assets/imagenes/dobby.jpg";
 import harryImg from "../assets/imagenes/HarryPotter.jpg";
 
 
-const contacts = [
+const dummycontacts = [
   { name: "Hedwig", img: hedwigImg },
   { name: "Dobby", img: dobbyImg },
 ];
 
-const messages = [
+const dummymessages = [
   {
     name: "Hedwig la Lechuza",
     img: hedwigImg,
@@ -218,7 +218,7 @@ const cerrarSesion = () => {
         if (response.ok) {
           setMessagesByChat(prev => ({
             ...prev,
-            [contact.ID_Chat]: data.mensajes, // o como vengan tus mensajes
+            [contact.ID_Chat]: data.mensajes,  
           }));
         }
       } catch (error) {
