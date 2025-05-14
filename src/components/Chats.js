@@ -89,6 +89,7 @@ const cerrarSesion = () => {
   .then((data) => {
     if (data.usuario) {
       setCurrentUser(data.usuario);
+      
     } else {
       console.error('Usuario no encontrado');
     }
@@ -174,7 +175,11 @@ const cerrarSesion = () => {
         const data = await response.json();
 
         if (data.chats) {
-          setContacts(data.chats); // Si hay chats, los agregamos al estado
+            const contactosConImagen = data.chats.map(chat => ({
+            ...chat,
+            img: chat.Avatar_usu || hedwigImg, // Usa imagen por defecto si no hay
+          }));
+          setContacts(contactosConImagen);
         } else {
           setContacts([]);  // Si no hay chats, la lista está vacía
         }
@@ -252,7 +257,7 @@ const cerrarSesion = () => {
           sent: true,
           name: currentUser.Username,
           text: messageText,
-          img: currentUser.avatar,
+          img: currentUser.Avatar_usu,
           time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
   
