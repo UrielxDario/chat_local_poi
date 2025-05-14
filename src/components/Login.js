@@ -27,7 +27,7 @@ export default function Login() {
       if (acceso === "ok") {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("correo", correo);
-        navigate("/chats");
+        navigate("/Chats");
       } else if (acceso === "correo") {
         alert("Ese correo no aparece ni en el mapa del merodeador");
       } else if (acceso === "password") {
