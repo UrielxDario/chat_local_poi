@@ -175,11 +175,7 @@ const cerrarSesion = () => {
         const data = await response.json();
 
         if (data.chats) {
-            const contactosConImagen = data.chats.map(chat => ({
-            ...chat,
-            img: chat.Avatar_usu || hedwigImg, // Usa imagen por defecto si no hay
-          }));
-          setContacts(contactosConImagen);
+            setContacts(data.chats);
         } else {
           setContacts([]);  // Si no hay chats, la lista está vacía
         }
