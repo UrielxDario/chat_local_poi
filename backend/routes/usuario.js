@@ -8,7 +8,7 @@ router.get("/usuarios-disponibles/:correo", (req, res) => {
   const correo = req.params.correo;
   const esGrupal = req.query.esGrupal === 'true'; 
 
-  const obtenerIDUsuario = `SELECT ID_Usuario FROM Usuario WHERE Correo_Usu = ?`;
+  const obtenerIDUsuario = `SELECT ID_Usuario FROM usuario WHERE Correo_Usu = ?`;
 
   connection.query(obtenerIDUsuario, [correo], (err, result) => {
     if (err) {
@@ -17,7 +17,7 @@ router.get("/usuarios-disponibles/:correo", (req, res) => {
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
+      return res.status(404).json({ error: "usuario no encontrado" });
     }
 
     const idUsuario = result[0].ID_Usuario;
@@ -25,7 +25,7 @@ router.get("/usuarios-disponibles/:correo", (req, res) => {
     if (esGrupal) {
       const queryGrupal = `
         SELECT ID_Usuario, Username
-        FROM Usuario
+        FROM usuario
         WHERE ID_Usuario != ?;
       `;
 
@@ -41,13 +41,13 @@ router.get("/usuarios-disponibles/:correo", (req, res) => {
     } else {
       const queryPrivado = `
         SELECT U.ID_Usuario, U.Username
-        FROM Usuario U
+        FROM usuario U
         WHERE U.ID_Usuario != ?
           AND NOT EXISTS (
             SELECT 1
-            FROM Chat C
-            JOIN Chat_Usuario CU1 ON C.ID_Chat = CU1.ID_Chat
-            JOIN Chat_Usuario CU2 ON C.ID_Chat = CU2.ID_Chat
+            FROM chat C
+            JOIN chat_usuario CU1 ON C.ID_Chat = CU1.ID_Chat
+            JOIN chat_usuario CU2 ON C.ID_Chat = CU2.ID_Chat
             WHERE C.EsGrupo = FALSE
               AND CU1.ID_Usuario = ?
               AND CU2.ID_Usuario = U.ID_Usuario
@@ -70,7 +70,7 @@ router.get("/usuarios-disponibles/:correo", (req, res) => {
 router.get("/obtener-usuario/:correoUsuario", (req, res) => {
     const correoUsuario = req.params.correoUsuario;  // Cambié correoUsuario por Correo_Usu
   
-    const sql = "SELECT * FROM Usuario WHERE Correo_Usu = ?";
+    const sql = "SELECT * FROM usuario WHERE Correo_Usu = ?";
     connection.query(sql, [correoUsuario], (err, results) => {
       if (err) {
         console.error("Error al verificar el correo:", err);
@@ -97,8 +97,8 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
           u.Username,
           u.Avatar_usu,
           u.ID_Usuario
-        FROM Mensaje m
-        JOIN Usuario u ON m.ID_Usuario = u.ID_Usuario
+        FROM mensaje m
+        JOIN usuario u ON m.ID_Usuario = u.ID_Usuario
         WHERE m.ID_Chat = ?
         ORDER BY m.HoraFecha_Mensaje ASC
       `, [idChat]);
