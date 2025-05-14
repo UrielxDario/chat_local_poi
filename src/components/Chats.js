@@ -342,7 +342,7 @@ const cerrarSesion = () => {
                 src={
                   selectedContact
                     ? `https://poi-back-igd5.onrender.com${selectedContact.img}`
-                    : '/default-avatar.png'
+                    : ''
                 }
                 
                 className="rounded-full w-12 h-12 object-cover"
