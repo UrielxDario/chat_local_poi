@@ -257,7 +257,7 @@ const cerrarSesion = () => {
           sent: true,
           name: currentUser.Username,
           text: messageText,
-          img: currentUser.Avatar_usu,
+          img: currentUser.avatar,
           time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
   
