@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom"; 
 import { useState } from "react";
 import './App.css';
+
+import { UserProvider } from "./context/UserContext";
+
 import Recompensas from "./components/Recompensas";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -20,7 +23,7 @@ function App() {
 
 
   
-
+<UserProvider>
 
 
     /*Toda esta parte de la etiqueta de router es para mostrar las ventanas al profe a partir del slash*/
@@ -97,6 +100,7 @@ function App() {
 
       </Routes>
     </Router>
+     </UserProvider>
   );
 }
 

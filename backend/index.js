@@ -25,19 +25,39 @@ const io = new Server(server, {
 });
 
 // === SOCKET.IO ===
-io.on('connection', (socket) => {
-  console.log('🟢 Usuario conectado vía Socket.IO:', socket.id);
+const usersConnected = {}; // userId: socket.id
 
-  // Evento personalizado: inicio de llamada
+io.on('connection', (socket) => {
+  console.log('🟢 Usuario conectado:', socket.id);
+
+  // Al conectarse, el frontend debe enviar su userId
+  socket.on('registerUser', (userId) => {
+    usersConnected[userId] = socket.id;
+    console.log(`📌 Usuario ${userId} registrado con socket ID ${socket.id}`);
+  });
+
   socket.on('startCall', ({ senderId, receiverId, callId }) => {
-    console.log(`📞 Llamada de ${senderId} a ${receiverId}, ID: ${callId}`);
-    io.emit(`incomingCall-${receiverId}`, { senderId, callId });
+    const receiverSocketId = usersConnected[receiverId];
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit(`incomingCall-${receiverId}`, { senderId, callId });
+      console.log(`📞 Emitiendo llamada a ${receiverId} en socket ${receiverSocketId}`);
+    } else {
+      console.log(`⚠️ Usuario ${receiverId} no está conectado`);
+    }
   });
 
   socket.on('disconnect', () => {
-    console.log('🔴 Usuario desconectado:', socket.id);
+    // Limpia los usuarios desconectados
+    for (const [userId, sId] of Object.entries(usersConnected)) {
+      if (sId === socket.id) {
+        delete usersConnected[userId];
+        console.log(`🔴 Usuario ${userId} desconectado`);
+        break;
+      }
+    }
   });
 });
+
 
 
 

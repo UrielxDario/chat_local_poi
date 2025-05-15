@@ -10,6 +10,7 @@ import harryImg from "../assets/imagenes/HarryPotter.jpg";
 
 //para la llamada
 import socket from './socket';
+import { useUser } from "../UserContext";
 
 
 
@@ -67,6 +68,8 @@ const cerrarSesion = () => {
 
 
   //Para la llamada
+    const { user } = useUser(); // acceder al usuario global
+
   const [incomingCall, setIncomingCall] = useState(null);
 
   
@@ -292,9 +295,11 @@ const cerrarSesion = () => {
 };
 
 
-
 useEffect(() => {
-  if (!user) return;
+  if (!user?.id) return;
+
+  // Registrar al usuario al conectar
+  socket.emit("registerUser", user.id);
 
   // Escuchar llamadas entrantes
   socket.on(`incomingCall-${user.id}`, ({ senderId, callId }) => {
@@ -302,10 +307,12 @@ useEffect(() => {
   });
 
   return () => {
-    // Limpieza al desmontar
     socket.off(`incomingCall-${user.id}`);
   };
 }, [user]);
+
+
+
 
 
 
