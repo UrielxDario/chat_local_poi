@@ -91,9 +91,9 @@ function App() {
 
         {/* Videollamada con Stream */}
         <Route 
-          path="/stream-call" 
-          element={<VideoCall />} 
-        />
+        path="/stream-call/:callId" 
+        element={<VideoCall />} />
+
 
       </Routes>
     </Router>

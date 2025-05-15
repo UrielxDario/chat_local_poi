@@ -118,7 +118,7 @@ router.post('/login', (req, res) => {
       { expiresIn: '1h' } 
     );
 
-    return res.json({ acceso: 'ok', mensaje: 'Inicio de sesión exitoso.', token });
+    return res.json({ acceso: 'ok', mensaje: 'Inicio de sesión exitoso.', token, id: usuario.ID_Usuario }); //Agregue  id: usuario.ID_Usuario para que guarde el id en el local storage
   });
 });
 
