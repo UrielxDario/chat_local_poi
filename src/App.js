@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import { useState } from "react";
 import './App.css';
 
-import { UserProvider } from "../UserContext";
+import { UserProvider } from "./UserContext";
 
 import Recompensas from "./components/Recompensas";
 import Login from "./components/Login";
