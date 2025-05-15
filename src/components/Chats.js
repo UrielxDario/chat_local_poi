@@ -8,6 +8,10 @@ import hedwigImg from "../assets/imagenes/hedwing.jpg";
 import dobbyImg from "../assets/imagenes/dobby.jpg";
 import harryImg from "../assets/imagenes/HarryPotter.jpg";
 
+//para la llamada
+import socket from './socket';
+
+
 
 const dummycontacts = [
   { name: "Hedwig", img: hedwigImg },
@@ -60,6 +64,11 @@ const cerrarSesion = () => {
   const [messagesByChat, setMessagesByChat] = useState({});
 
   const correoUsuario = localStorage.getItem("correo");
+
+
+  //Para la llamada
+  const [incomingCall, setIncomingCall] = useState(null);
+
   
   
   useEffect(() => {
@@ -269,6 +278,39 @@ const cerrarSesion = () => {
   };
 
 
+  //Handle para la llamada
+  const handleStartCall = () => {
+  const callId = `llamada-${user.id}-${receiver.id}-${Date.now()}`; // ID único
+
+  socket.emit('startCall', {
+    senderId: user.id,
+    receiverId: receiver.id,
+    callId,
+  });
+
+  navigate(`/stream-call/${callId}`);
+};
+
+
+
+useEffect(() => {
+  if (!user) return;
+
+  // Escuchar llamadas entrantes
+  socket.on(`incomingCall-${user.id}`, ({ senderId, callId }) => {
+    setIncomingCall({ sender: senderId, callId });
+  });
+
+  return () => {
+    // Limpieza al desmontar
+    socket.off(`incomingCall-${user.id}`);
+  };
+}, [user]);
+
+
+
+
+
   return (
     <div>
     {/* Barra de navegación */}
@@ -377,9 +419,14 @@ const cerrarSesion = () => {
           {/* MessageBar */}
           <div className="py-6 px-20 flex border-t">
             <div className="flex items-center w-full">
-              <button className="bg-red-700 text-yellow-200 rounded px-4 py-2">
+             <button
+                className="bg-red-700 text-yellow-200 rounded px-4 py-2"
+                onClick={handleStartCall}
+              >
                 <i className="fas fa-phone-alt"></i>
               </button>
+
+
               <button className="bg-red-700 text-yellow-200 rounded px-4 py-2 ml-4 mr-4">
                 <i className="fas fa-paperclip"></i>
               </button>
@@ -479,6 +526,34 @@ const cerrarSesion = () => {
 
 
 
+
+   {/* Notificacion llamada entrante */}
+      {incomingCall && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-md text-center">
+            <p className="mb-4 font-semibold">
+              📞 {incomingCall.sender} un alma se quiere comunicar contigo...
+            </p>
+            <div className="flex justify-center space-x-4">
+              <button
+                className="bg-green-600 text-white px-4 py-2 rounded"
+                onClick={() => {
+                  navigate(`/stream-call/${incomingCall.callId}`);
+                  setIncomingCall(null);
+                }}
+              >
+                Aceptar
+              </button>
+              <button
+                className="bg-red-600 text-white px-4 py-2 rounded"
+                onClick={() => setIncomingCall(null)}
+              >
+                Rechazar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
 
