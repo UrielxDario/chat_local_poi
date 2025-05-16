@@ -11,6 +11,7 @@ import harryImg from "../assets/imagenes/HarryPotter.jpg";
 //para la llamada
 import socket from './socket';
 import { useUser } from "../UserContext";
+import axios from "axios";
 
 
 
@@ -71,6 +72,10 @@ const cerrarSesion = () => {
     const { user } = useUser(); // acceder al usuario global
 
   const [incomingCall, setIncomingCall] = useState(null);
+  const [chatSeleccionado, setChatSeleccionado] = useState(null);
+const [receptorId, setReceptorId] = useState(null);
+const [mensajes, setMensajes] = useState([]);
+
 
   
   
