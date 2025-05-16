@@ -282,17 +282,20 @@ const cerrarSesion = () => {
 
 
   //Handle para la llamada
-  const handleStartCall = () => {
-  const callId = `llamada-${user.id}-${receiver.id}-${Date.now()}`; // ID único
+ const handleStartCall = () => {
+  if (!chatSeleccionado || !receptorId) return;
+
+  const callId = `llamada-${user.id}-${receptorId}-${Date.now()}`;
 
   socket.emit('startCall', {
     senderId: user.id,
-    receiverId: chat.idUsuario,
+    receiverId: receptorId,
     callId,
   });
 
   navigate(`/stream-call/${callId}`);
 };
+
 
 
 useEffect(() => {
@@ -310,6 +313,24 @@ useEffect(() => {
     socket.off(`incomingCall-${user.id}`);
   };
 }, [user]);
+
+//Handle para seleccionar el chat y su id del otro usuario
+const handleSelectChat = async (chat) => {
+  try {
+    // Cargar mensajes
+    const mensajesRes = await axios.get(`/api/obtener-mensajes/${chat.ID_Chat}`);
+    setMensajes(mensajesRes.data.mensajes);
+    setChatSeleccionado(chat);
+
+    // Cargar receptor
+    const receptorRes = await axios.get(`/api/obtener-receptor/${chat.ID_Chat}/${user.correo}`);
+    setReceptorId(receptorRes.data.receptorId);
+
+  } catch (error) {
+    console.error("Error al cargar el chat o receptor:", error);
+  }
+};
+
 
 
 

@@ -218,4 +218,45 @@ router.post("/send-message", (req, res) => {
   });
 });
 
+
+//Para obtener el usuario en base al chat abierto
+router.get('/obtener-receptor/:idChat/:correoUsuario', async (req, res) => {
+  const { idChat, correoUsuario } = req.params;
+
+  try {
+    // Obtener ID del usuario actual por correo
+    const [usuarioActual] = await conexion.promise().query(
+      "SELECT ID_Usuario FROM usuario WHERE Correo_usu = ?",
+      [correoUsuario]
+    );
+
+    if (!usuarioActual.length) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    const idActual = usuarioActual[0].ID_Usuario;
+
+    // Buscar el receptor del chat (otro usuario en la relación chat_usuario)
+    const [receptorQuery] = await conexion.promise().query(
+      `SELECT ID_Usuario 
+       FROM chat_usuario 
+       WHERE ID_Chat = ? AND ID_Usuario != ?`,
+      [idChat, idActual]
+    );
+
+    if (!receptorQuery.length) {
+      return res.status(404).json({ error: "Receptor no encontrado" });
+    }
+
+    const receptorId = receptorQuery[0].ID_Usuario;
+
+    return res.status(200).json({ receptorId });
+
+  } catch (error) {
+    console.error("Error al obtener receptor:", error);
+    return res.status(500).json({ error: "Error al obtener el receptor del chat" });
+  }
+});
+
+
 module.exports = router;
