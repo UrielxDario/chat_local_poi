@@ -4,7 +4,6 @@ const db = require('./db');
 const authRoutes = require("./routes/auth");
 const rutasUsuarios = require("./routes/usuario"); 
 const chatRoutes = require("./routes/chat"); 
-const tokenRoute = require('./routes/token');
 
 
 require('dotenv').config();
@@ -82,7 +81,6 @@ app.use("/api", rutasUsuarios);
 
 app.use(chatRoutes);
 
-app.use('/api/token', tokenRoute);
 
 
 //aqui abajo cambie app.listen por server.listen para lo del socket.io de actualizacion en tiempo real
