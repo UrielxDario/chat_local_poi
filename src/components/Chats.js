@@ -287,7 +287,7 @@ const cerrarSesion = () => {
 
   socket.emit('startCall', {
     senderId: user.id,
-    receiverId: receiver.id,
+    receiverId: chat.idUsuario,
     callId,
   });
 

@@ -96,6 +96,11 @@ router.get('/obtener-chats', async (req, res) => {
     // Formatear los chats con la última información relevante
     const formattedChats = chats.map(chat => ({
       ID_Chat: chat.ID_Chat,
+       receiver: {//Este receiver se lo agregue para la videollamada
+          name: chat.Username,
+          img: chat.Avatar_usu,
+          // Puedes incluir más campos si lo deseas
+        },
       name: chat.Username, // Aquí debes asegurarte que estás obteniendo el nombre correctamente
       img: chat.Avatar_usu, // Y la imagen del usuario
       lastMessage: 'Último mensaje...', // Agrega lógica para obtener el último mensaje de cada chat
