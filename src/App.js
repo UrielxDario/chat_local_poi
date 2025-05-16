@@ -26,7 +26,6 @@ function App() {
 <UserProvider>
 
 
-    /*Toda esta parte de la etiqueta de router es para mostrar las ventanas al profe a partir del slash*/
      <Router>
       <Routes>
         {/* Login */}
