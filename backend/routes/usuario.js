@@ -102,7 +102,9 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
         WHERE m.ID_Chat = ?
         ORDER BY m.HoraFecha_Mensaje ASC
       `, [idChat]);
-  
+        
+
+      mensajes.Avatar_Blob ? `data:image/jpeg;base64,${chat.Avatar_Blob.toString('base64')}` : null
       return res.status(200).json({ mensajes });
     } catch (error) {
       console.error("Error al obtener mensajes:", error);
