@@ -440,17 +440,16 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
 
 
           <div className="py-6 px-20 overflow-auto h-3/4">{/* MENSAJES */}
-           {mensajesActuales.map((message , index) => {
-            console.log(message); // Esto debería mostrar el mensaje en consola
-            return (
-              <div key={index} className={`flex mb-12 ${message.sent ? "flex-row-reverse" : ""}`}>
-                <img src={message.Avatar_Blob} className="w-10 h-10 rounded-full" alt="User avatar" />
-                <div className="bg-white rounded-lg p-4 max-w-xs shadow">
-                  <p>{message.TextoMensaje}</p> {/* Asegúrate de que message.text no esté vacío */}
+           {messagesByChat[selectedContact.ID_Chat]?.map((msg, index) => (
+              <div key={index} className={msg.sent ? "message-sent" : "message-received"}>
+                <img src={msg.Avatar_Blob || msg.img} alt={msg.name} />
+                <div>
+                  <strong>{msg.name}</strong>
+                  <p>{msg.TextoMensaje || msg.text}</p>
+                  <span>{msg.time}</span>
                 </div>
-              </div>  
-            );
-           })}
+              </div>
+            ))}
           </div>
 
           {/* MessageBar */}
