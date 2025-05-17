@@ -392,7 +392,7 @@ const handleSelectChat = async (chat) => {
           ) : (
             contacts.map((contacts, index) => (
               <div key={index} className="flex bg-red-900 rounded-lg p-4 mb-4 hover:bg-red-800 transition-colors duration-200" onClick={() => handleSelectContact(contacts)}>
-                <img src={`https://poi-back-igd5.onrender.com${contacts.img}`} className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mr-4 border-2 border-yellow-300" alt={contacts.name} />
+                <img src={`${contacts.img}`} className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mr-4 border-2 border-yellow-300" alt={contacts.name} />
                 <div className="w-full overflow-hidden">
                   <div className="flex mb-1">
                     <a className="flex-grow text-yellow-200 hover:text-yellow-400 transition-colors duration-200 font-medium cursor-pointer">{contacts.name}</a>
@@ -416,7 +416,7 @@ const handleSelectChat = async (chat) => {
               <img
                 src={
                   selectedContact
-                    ? `https://poi-back-igd5.onrender.com${selectedContact.img}`
+                    ? `${selectedContact.img}`
                     : ''
                 }
                 
