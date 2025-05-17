@@ -7,17 +7,29 @@ import { TaskCreator } from './TaskCreator';
 import { Link, useNavigate } from "react-router-dom";
 
 
-export default function Tareas() {
+function Tareas() {
+  const [tareas, setTareas] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [taskItems, setTaskItems] = useState([]);
   const correo = localStorage.getItem("correo");
-    
+  const obtenerTareas = () => {
+    axios.get(`https://poi-back-igd5.onrender.com/api/tareas/${correo}`)
+      .then(response => setTareas(response.data))
+      .catch(error => console.error("Error al obtener tareas:", error));
+  };
 
+  useEffect(() => {
+    obtenerTareas();
+  }, []);  
+
+  const filtrarIncompletas = () => {
+    setTareas(tareas.filter(tarea => !tarea.Completada));
+  };
 
   useEffect(() => {
 
   if(!correo) return;
-  
+
   axios.get(`${process.env.REACT_APP_API_URL}/api/tareas/${correo}`)
     .then(res => setTaskItems(res.data))
     .catch(err => console.error("Error al cargar tareas:", err));
@@ -75,25 +87,23 @@ function createNewTask(taskName) {
 
       <TaskCreator createNewTask={createNewTask} />
 
-      <table className="table text-white">
-        <thead>
-          <tr><th>Tarea</th><th>Hecha</th></tr>
-        </thead>
-        <tbody>
-          {taskItems.map(task => (
-            <tr key={task.ID_Tarea}>
-              <td>{task.Titulo_Tarea}</td>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={!!task.Terminada}
-                  onChange={() => toggleTaskStatus(task.ID_Tarea, task.Terminada)}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="contenedor-tareas">
+      <h2>Mis tareas</h2>
+      <div className="botones">
+        <button onClick={obtenerTareas}>🔄 Refrescar</button>
+        <button onClick={filtrarIncompletas}>❌ Solo incompletas</button>
+      </div>
+
+      <ul className="lista-tareas">
+        {tareas.map((tarea, index) => (
+          <li key={index} className={tarea.Completada ? 'tarea completada' : 'tarea incompleta'}>
+            {tarea.Titulo_Tarea}
+          </li>
+        ))}
+      </ul>
+    </div>
     </div>
   );
 }
+
+export default Tareas;

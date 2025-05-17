@@ -14,3 +14,56 @@
     color: rgb(201, 197, 8);
     font-weight: bold;
   }
+
+  .contenedor-tareas {
+  max-width: 500px;
+  margin: auto;
+  background-color: #fdfdfd;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.botones {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+button {
+  background-color: #007bff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.lista-tareas {
+  list-style: none;
+  padding: 0;
+}
+
+.tarea {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.tarea.incompleta {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.tarea.completada {
+  background-color: #d4edda;
+  color: #155724;
+  text-decoration: line-through;
+}
