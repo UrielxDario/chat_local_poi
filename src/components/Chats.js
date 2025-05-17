@@ -370,7 +370,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
           <ul className="dropdown-menu show position-absolute bg-light">
             <li><a className="dropdown-item" href="#">Mi Perfil</a></li>
             <li><a className="dropdown-item" href="#">Editar Perfil</a></li>
-            <li><a className="dropdown-item" ><Link to="/tareas"> Tareas</Link></a></li>
+            <li><Link className="dropdown-item" to="/tareas"> Chats</Link></li>
             <li><a className="dropdown-item" href="#">Recompensas</a></li>
             <li onClick={cerrarSesion} className="dropdown-item text-danger" style={{ cursor: "pointer" }}>
   Cerrar Sesión
