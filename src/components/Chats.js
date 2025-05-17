@@ -1,4 +1,5 @@
 import React from "react";
+import { useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -67,6 +68,7 @@ const cerrarSesion = () => {
 
   const correoUsuario = localStorage.getItem("correo");
 
+  const messagesEndRef = useRef(null);
 
   //Para la llamada
     const { user } = useUser(); // acceder al usuario global
@@ -221,7 +223,7 @@ const [mensajes, setMensajes] = useState([]);
         })
         .catch((err) => console.error("Error al obtener mensajes:", err));
     }
-  }, 2000); // cada 5 segundos
+  }, 2000); // cada 2 segundos
 
   return () => clearInterval(intervalo); // Limpiar el intervalo al desmontar
 }, [selectedContact]);
@@ -248,6 +250,11 @@ const [mensajes, setMensajes] = useState([]);
     }
   };
   
+  useEffect(() => {
+  if (messagesEndRef.current) {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }
+}, [messagesByChat[selectedContact?.ID_Chat]]);
 
   const handleSendMessage = async () => {
     if (!messageText.trim() || !selectedContact) return;
@@ -451,6 +458,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
               </div>  
             );
            })}
+           <div ref={messagesEndRef} />
           </div>
 
           {/* MessageBar */}
