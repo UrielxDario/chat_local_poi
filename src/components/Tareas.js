@@ -54,6 +54,15 @@ function fetchTasks(correo){
       .catch(err => console.error("Error al actualizar tarea:", err));
   }
 
+  function fetchIncompleteTasks() {
+  axios.get(`${process.env.REACT_APP_API_URL}/api/tareas/${correo}`)
+    .then(res => {
+      const tareasPendientes = res.data.filter(task => !task.Terminada);
+      setTaskItems(tareasPendientes);
+    })
+    .catch(err => console.error("Error al cargar tareas pendientes:", err));
+}
+
   return (
     <div className="bg-dark-custom text-white min-vh-100">
       <nav className="navbar navbar-expand-lg navbar-dark shadow-sm">
@@ -79,7 +88,11 @@ function fetchTasks(correo){
       <h1 className="navbar-brand magic-title">Lista de Tareas</h1>
 
       <TaskCreator createNewTask={createNewTask} />
-       
+      
+      <button className="btn btn-primary m-3" onClick={fetchIncompleteTasks}>
+          Mostrar solo tareas pendientes
+      </button>
+
       <table className="table text-white">
         <thead>
           <tr><th>Tarea</th><th>Hecha</th></tr>

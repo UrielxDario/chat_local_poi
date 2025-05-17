@@ -19,7 +19,7 @@ export const TaskCreator = ({ createNewTask }) => {
         value={newTaskName}
         onChange={(e) => setNewTaskName(e.target.value)}
       />
-      <button type="submit">Guardar tarea</button>
+      <button style="background-color: rgba(222, 219, 3, 0.7);" type="submit">Guardar tarea</button>
     </form>
   );
 };
