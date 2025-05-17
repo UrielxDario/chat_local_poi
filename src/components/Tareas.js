@@ -57,7 +57,7 @@ function createNewTask(taskName) {
               <li><a className="dropdown-item" href="#">Editar Perfil</a></li>
               <li><a className="dropdown-item" href="#">Tareas</a></li>
               <li><a className="dropdown-item" href="#">Recompensas</a></li>
-              <li><a className="dropdown-item" ><Link to="/chats"> Chats</Link></a></li>
+              <li> <Link className="dropdown-item" to="/chats">Chats</Link></li>
               <li><a className="dropdown-item text-danger" href="#">Cerrar Sesión</a></li>
             </ul>
           )}
