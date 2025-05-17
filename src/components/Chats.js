@@ -525,7 +525,7 @@ const [callId, setCallId] = useState('');
         </div>
     </div>
 
-      <div className="bg-yellow-200 w-9/12">{/* CHAT */}
+      <div className="bg-yellow-200 w-9/12 h-full overflow-y-auto">{/* CHAT */}
       <div className="px-20 py-6 border-b">{/* HEADER */}
         <div className="flex">
           <div className="flex flex-grow">
@@ -552,7 +552,7 @@ const [callId, setCallId] = useState('');
       </div>
 
 
-          <div className="py-6 px-20 overflow-y-auto h-3/4">{/* MENSAJES */}
+          <div className="py-6 px-20 overflow-y-auto min-h-0 flex-1">{/* MENSAJES */}
            {mensajesActuales.map((message , index) => {
             console.log(message); // Esto debería mostrar el mensaje en consola
             return (
@@ -729,34 +729,6 @@ const [callId, setCallId] = useState('');
 
 
 
-
-   {/* Notificacion llamada entrante */}
-      {incomingCall && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-md text-center">
-            <p className="mb-4 font-semibold">
-              📞 {incomingCall.sender} un alma se quiere comunicar contigo...
-            </p>
-            <div className="flex justify-center space-x-4">
-              <button
-                className="bg-green-600 text-white px-4 py-2 rounded"
-                onClick={() => {
-                  navigate(`/stream-call/${incomingCall.callId}`);
-                  setIncomingCall(null);
-                }}
-              >
-                Aceptar
-              </button>
-              <button
-                className="bg-red-600 text-white px-4 py-2 rounded"
-                onClick={() => setIncomingCall(null)}
-              >
-                Rechazar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
 
