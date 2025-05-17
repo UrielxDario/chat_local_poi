@@ -269,14 +269,14 @@ const [mensajes, setMensajes] = useState([]);
   
       if (data.success) {
         const newMessage = {
-          id: data.messageId,
+          id: data.ID_Chat,
           sent: true,
           name: currentUser.Username,
           text: messageText,
           img: currentUser.avatar,
           time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
-  
+        console.log("Nuevo mensaje:", newMessage);
         setMessagesByChat(prev => ({
           ...prev,
           [selectedContact.ID_Chat]: [...(prev[selectedContact.ID_Chat] || []), newMessage],
@@ -440,17 +440,21 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
 
 
           <div className="py-6 px-20 overflow-auto h-3/4">{/* MENSAJES */}
-          {mensajesActuales.map((messagesByChat , index) => {
-            console.log(messagesByChat); // Esto debería mostrar el mensaje en consola
-            return (
-              <div key={index} className={`flex mb-12 ${messagesByChat.sent ? "flex-row-reverse" : ""}`}>
-                <img src={messagesByChat.Avatar_Blob} className="w-10 h-10 rounded-full" alt="User avatar" />
-                <div className="bg-white rounded-lg p-4 max-w-xs shadow">
-                  <p>{messagesByChat.TextoMensaje}</p> {/* Asegúrate de que message.text no esté vacío */}
+            {(messagesByChat[selectedContact?.ID_Chat] || []).map((msg, index) => (
+              <div
+                key={index}
+                className={`flex mb-2 ${msg.sent ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`p-2 rounded-lg max-w-xs ${
+                    msg.sent ? "bg-blue-500 text-white" : "bg-gray-200 text-black"
+                  }`}
+                >
+                  <p>{msg.text}</p>
+                  <small className="text-xs block text-right">{msg.time}</small>
                 </div>
               </div>
-            );
-          })}
+            ))} 
           </div>
 
           {/* MessageBar */}
