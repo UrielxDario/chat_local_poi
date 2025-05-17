@@ -12,7 +12,7 @@ export default function Tareas() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [taskItems, setTaskItems] = useState([]);
-  const [correo, setCorreo] = useState("");
+  const [correo, setCorreo] = useState(localStorage.getItem("correo") || "");
     
   useEffect(() => {
       const storedCorreo = localStorage.getItem("correo");
