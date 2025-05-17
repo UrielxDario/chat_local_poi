@@ -7,7 +7,7 @@ import { TaskCreator } from './TaskCreator';
 import { Link, useNavigate } from "react-router-dom";
 
 
-function Tareas() {
+export default function Tareas() {
   const [tareas, setTareas] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [taskItems, setTaskItems] = useState([]);
@@ -106,4 +106,4 @@ function createNewTask(taskName) {
   );
 }
 
-export default Tareas;
+
