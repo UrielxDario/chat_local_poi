@@ -443,17 +443,22 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
       </div>
 
 
-          <div className="py-6 px-20 overflow-auto h-3/4">{/* MENSAJES */}
-           {messagesByChat[selectedContact?.ID_Chat].map((msg, index) => (
-              <div key={index} className={msg.sent ? "message-sent" : "message-received"}>
-                <img src={msg.Avatar_Blob || msg.img} alt={msg.name} />
-                <div>
-                  <strong>{msg.name}</strong>
-                  <p>{msg.send ? msg.TextoMensaje : msg.text}</p>
-                  <span>{msg.time}</span>
+          <div className="py-6 px-20 overflow-auto h-3/4">
+            {/* MENSAJES */}
+            {messagesByChat[selectedContact?.ID_Chat]?.length > 0 ? (
+              messagesByChat[selectedContact.ID_Chat].map((msg, index) => (
+                <div key={index} className={msg.sent ? "message-sent" : "message-received"}>
+                  <img src={msg.Avatar_Blob || msg.img} alt={msg.name} />
+                  <div>
+                    <strong>{msg.name}</strong>
+                    <p>{msg.send ? msg.TextoMensaje : msg.text}</p>
+                    <span>{msg.time}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500">No hay mensajes para este chat.</p>
+            )}
           </div>
 
           {/* MessageBar */}
