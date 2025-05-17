@@ -28,7 +28,7 @@ export default function Tareas() {
       
     }, [correo]);
 
-function fetchTasks(){
+function fetchTasks(correo){
   if (!correo) {
     navigate("/login");  
     return;
