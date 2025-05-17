@@ -18,7 +18,11 @@ export default function Tareas() {
       const storedCorreo = localStorage.getItem("correo");
       if (storedCorreo) {
         setCorreo(storedCorreo);
-        fetchTasks(storedCorreo)
+        fetchTasks(storedCorreo); 
+        const interval = setInterval(() => {
+          fetchTasks(storedCorreo);
+        }, 3000);
+        return() => clearInterval(interval);
       } else {
         navigate("/login"); // o tu ruta de inicio de sesión
       }

@@ -13,7 +13,7 @@ router.get('/:correo', (req, res) => {
 
     const userId = results[0].ID_Usuario;
 
-    const getTasksQuery = 'SELECT * FROM Tarea WHERE ID_Usuario = ?';
+    const getTasksQuery = 'SELECT * FROM Tarea WHERE ID_Usuario = ? AND Terminada = 0';
     db.query(getTasksQuery, [userId], (err, tareas) => {
       if (err) return res.status(500).json({ error: 'Error al obtener tareas' });
       res.json(tareas);
