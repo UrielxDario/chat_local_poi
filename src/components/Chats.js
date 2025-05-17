@@ -525,7 +525,7 @@ const [callId, setCallId] = useState('');
         </div>
     </div>
 
-      <div className="bg-yellow-200 w-9/12 h-full overflow-y-auto">{/* CHAT */}
+      <div className="bg-yellow-200 w-9/12">{/* CHAT */}
       <div className="px-20 py-6 border-b">{/* HEADER */}
         <div className="flex">
           <div className="flex flex-grow">
@@ -552,7 +552,7 @@ const [callId, setCallId] = useState('');
       </div>
 
 
-          <div className="py-6 px-20 overflow-y-auto min-h-0 flex-1">{/* MENSAJES */}
+          <div className="py-6 px-20 overflow-y-auto h-3/4">{/* MENSAJES */}
            {mensajesActuales.map((message , index) => {
             console.log(message); // Esto debería mostrar el mensaje en consola
             return (
@@ -726,6 +726,69 @@ const [callId, setCallId] = useState('');
         </div>
       </div>
     )}
+
+
+
+      {/* VENTANA MODAL PARA VIDEOLLAMADA */}
+    {mostrarControlesVideo && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white p-6 rounded-lg w-11/12 max-w-5xl relative">
+      {/* Botón cerrar */}
+      <button
+        onClick={() => setMostrarControlesVideo(false)}
+        className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl font-bold"
+      >
+        &times;
+      </button>
+
+      <h1 className="text-xl font-bold mb-4">Videollamada</h1>
+
+      <div className="flex gap-4 mb-4">
+        <video
+          ref={localVideoRef}
+          autoPlay
+          muted
+          playsInline
+          className="w-1/2 border rounded"
+        />
+        <video
+          ref={remoteVideoRef}
+          autoPlay
+          playsInline
+          className="w-1/2 border rounded"
+        />
+      </div>
+
+      <div className="flex flex-wrap gap-4">
+        <button
+          onClick={startWebcam}
+          className="bg-green-500 text-white px-4 py-2 rounded"
+        >
+          Activar cámara
+        </button>
+        <button
+          onClick={createCall}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Crear llamada
+        </button>
+        <input
+          value={callId}
+          onChange={(e) => setCallId(e.target.value)}
+          placeholder="ID de llamada"
+          className="border px-2 py-1 rounded"
+        />
+        <button
+          onClick={answerCall}
+          className="bg-purple-500 text-white px-4 py-2 rounded"
+        >
+          Responder llamada
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
 
 
