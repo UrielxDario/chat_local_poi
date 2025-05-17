@@ -168,7 +168,8 @@ const [mensajes, setMensajes] = useState([]);
         setUsuariosSeleccionados([]);
         setNombreGrupo("");
         setEsGrupal(false);
-        // Aquí puedes recargar la lista de chats si quieres
+        await fetchChats();
+        
       } else {
         alert("Error: " + (data.mensaje || "Algo salió mal al crear el chat."));
       }
@@ -178,31 +179,32 @@ const [mensajes, setMensajes] = useState([]);
     }
   };
 
+  const fetchChats = async () => {
+  try {
+    const response = await fetch(`https://poi-back-igd5.onrender.com/obtener-chats?correoUsuario=${correoUsuario}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.chats) {
+      setContacts(data.chats);
+    } else {
+      setContacts([]);
+    }
+  } catch (error) {
+    console.error('Error al cargar los chats:', error);
+  }
+  };
+
+  // Cargar chats al montar el componente
   useEffect(() => {
-    // Solicitar los chats al backend
-    const fetchChats = async () => {
-      try {
-        const response = await fetch(`https://poi-back-igd5.onrender.com/obtener-chats?correoUsuario=${correoUsuario}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        const data = await response.json();
-
-        if (data.chats) {
-            setContacts(data.chats);
-        } else {
-          setContacts([]);  // Si no hay chats, la lista está vacía
-        }
-      } catch (error) {
-        console.error('Error al cargar los chats:', error);
-      }
-    };
-
     fetchChats();
   }, [correoUsuario]);
+
 
   useEffect(() => {
     if (selectedContact?.ID_Chat) {
