@@ -444,7 +444,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
 
 
           <div className="py-6 px-20 overflow-auto h-3/4">{/* MENSAJES */}
-           {messagesByChat[selectedContact.ID_Chat]?.map((msg, index) => (
+           {messagesByChat[selectedContact?.ID_Chat]?.map((msg, index) => (
               <div key={index} className={msg.sent ? "message-sent" : "message-received"}>
                 <img src={msg.Avatar_Blob || msg.img} alt={msg.name} />
                 <div>
