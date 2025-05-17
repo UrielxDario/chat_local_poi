@@ -8,40 +8,47 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 export default function Tareas() {
-  const [tareas, setTareas] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [taskItems, setTaskItems] = useState([]);
   const correo = localStorage.getItem("correo");
-  
-  const obtenerTareas = () => {
-    axios.get(`https://poi-back-igd5.onrender.com/api/tareas/${correo}`)
-      .then(response => setTareas(response.data))
-      .catch(error => console.error("Error al obtener tareas:", error));
-  };
+    
+
 
   useEffect(() => {
-    obtenerTareas();
-  }, []);  
 
-  const filtrarIncompletas = () => {
-    setTareas(tareas.filter(tarea => !tarea.Terminada));
-  };
-
+  if(!correo) return;
   
+  axios.get(`${process.env.REACT_APP_API_URL}/api/tareas/${correo}`)
+    .then(res => setTaskItems(res.data))
+    .catch(err => console.error("Error al cargar tareas:", err));
+}, [correo]);
 
 function createNewTask(taskName) {
-  axios.post(`https://poi-back-igd5.onrender.com/api/tareas`, {
-      correo: correo,
-      Titulo_Tarea: taskName
+  axios.post(`${process.env.REACT_APP_API_URL}/api/tareas`, {
+    correo: correo,
+    Titulo_Tarea: taskName
+  })
+    .then(res => {
+      setTaskItems([...taskItems, {
+        ID_Tarea: res.data.id_tarea,
+        Titulo_Tarea: taskName,
+        Terminada: false
+      }]);
     })
-      .then(res => {
-        // Si el backend responde con la tarea completa
-        setTareas(prev => [...prev, res.data]);
-        // Si no, puedes hacer otro GET o agregarla manualmente
-      })
-      .catch(err => console.error("Error al crear tarea:", err));
+    .catch(err => console.error("Error al crear tarea:", err));
   }
 
- 
+  function toggleTaskStatus(taskId, currentStatus) {
+  axios.put(`${process.env.REACT_APP_API_URL}/api/tareas/${taskId}`, {
+    Terminada: !currentStatus
+  })
+    .then(() => {
+      setTaskItems(taskItems.map(task =>
+        task.ID_Tarea === taskId ? { ...task, Terminada: !currentStatus } : task
+      ));
+    })
+    .catch(err => console.error("Error al actualizar tarea:", err));
+}
 
   return (
     <div className="bg-dark-custom text-white min-vh-100">
@@ -57,7 +64,7 @@ function createNewTask(taskName) {
               <li><a className="dropdown-item" href="#">Editar Perfil</a></li>
               <li><a className="dropdown-item" href="#">Tareas</a></li>
               <li><a className="dropdown-item" href="#">Recompensas</a></li>
-              <li> <Link className="dropdown-item" to="/chats">Chats</Link></li>
+              <li><a className="dropdown-item" ><Link to="/chats"> Chats</Link></a></li>
               <li><a className="dropdown-item text-danger" href="#">Cerrar Sesión</a></li>
             </ul>
           )}
@@ -68,29 +75,25 @@ function createNewTask(taskName) {
 
       <TaskCreator createNewTask={createNewTask} />
 
-      <div className="container py-4">
-        <h1 className="magic-title">Lista de Tareas</h1>
-
-        <TaskCreator createNewTask={createNewTask} />
-
-        <div className="contenedor-tareas mt-4">
-          <h2>Mis tareas</h2>
-          <div className="botones mb-3">
-            <button className="btn btn-light me-2" onClick={obtenerTareas}>🔄 Refrescar</button>
-            <button className="btn btn-outline-warning" onClick={filtrarIncompletas}>❌ Solo incompletas</button>
-          </div>
-
-          <ul className="lista-tareas list-group">
-            {tareas.map((tarea, index) => (
-              <li key={index} className={`list-group-item ${tarea.Terminada ? 'list-group-item-success' : 'list-group-item-danger'}`}>
-                {tarea.Titulo_Tarea}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      <table className="table text-white">
+        <thead>
+          <tr><th>Tarea</th><th>Hecha</th></tr>
+        </thead>
+        <tbody>
+          {taskItems.map(task => (
+            <tr key={task.ID_Tarea}>
+              <td>{task.Titulo_Tarea}</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={!!task.Terminada}
+                  onChange={() => toggleTaskStatus(task.ID_Tarea, task.Terminada)}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
-
-
