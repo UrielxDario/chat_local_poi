@@ -4,7 +4,7 @@ const db = require('./db');
 const authRoutes = require("./routes/auth");
 const rutasUsuarios = require("./routes/usuario"); 
 const chatRoutes = require("./routes/chat"); 
-
+const tareasRoutes = require('./routes/tareasRoutes');
 
 require('dotenv').config();
 
@@ -76,6 +76,8 @@ app.use((req, res, next) => {
 // Rutas de prueba
 
 app.use("/api/auth", authRoutes);
+
+app.use('/api/tareas', tareasRoutes);
 
 app.use("/api", rutasUsuarios);
 
