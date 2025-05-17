@@ -446,7 +446,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
               <div key={index} className={`flex mb-12 ${message.sent ? "flex-row-reverse" : ""}`}>
                 <img src={message.Avatar_Blob} className="w-10 h-10 rounded-full" alt="User avatar" />
                 <div className="bg-white rounded-lg p-4 max-w-xs shadow">
-                  <p>{message.text}</p> {/* Asegúrate de que message.text no esté vacío */}
+                  <p>{message.TextoMensaje}</p> {/* Asegúrate de que message.text no esté vacío */}
                 </div>
               </div>  
             );
