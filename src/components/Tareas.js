@@ -29,18 +29,16 @@ export default function Tareas() {
   
 
 function createNewTask(taskName) {
-  axios.post(`${process.env.REACT_APP_API_URL}/api/tareas`, {
-    correo: correo,
-    Titulo_Tarea: taskName
-  })
-    .then(res => {
-      setTaskItems([...taskItems, {
-        ID_Tarea: res.data.id_tarea,
-        Titulo_Tarea: taskName,
-        Terminada: false
-      }]);
+  axios.post(`https://poi-back-igd5.onrender.com/api/tareas`, {
+      correo: correo,
+      Titulo_Tarea: taskName
     })
-    .catch(err => console.error("Error al crear tarea:", err));
+      .then(res => {
+        // Si el backend responde con la tarea completa
+        setTareas(prev => [...prev, res.data]);
+        // Si no, puedes hacer otro GET o agregarla manualmente
+      })
+      .catch(err => console.error("Error al crear tarea:", err));
   }
 
  
