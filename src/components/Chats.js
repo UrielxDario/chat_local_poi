@@ -457,6 +457,35 @@ const [callId, setCallId] = useState('');
   };
 
 
+  const endCall = () => {
+  // Detener las pistas de la cámara y micrófono
+  if (localStream.current) {
+    localStream.current.getTracks().forEach((track) => track.stop());
+  }
+
+  // Detener el video remoto
+  if (remoteVideoRef.current?.srcObject) {
+    remoteVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+    remoteVideoRef.current.srcObject = null;
+  }
+
+  // Detener el video local
+  if (localVideoRef.current?.srcObject) {
+    localVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+    localVideoRef.current.srcObject = null;
+  }
+
+  // Cerrar la conexión peer
+  pc.close();
+
+  // Resetear el objeto RTCPeerConnection si vas a hacer otra llamada después
+  // Nota: Tendrías que re-crear el objeto si necesitas llamar de nuevo
+
+  setMostrarControlesVideo(false); // Cierra la ventana modal
+};
+
+
+
   
 ////////PARA LA LLAMADA DE AQUI PA ARRIBA
 
@@ -600,55 +629,7 @@ const [callId, setCallId] = useState('');
             </div>
           </div>
 
-          {/*Interfaz de videollamada */}
-          {mostrarControlesVideo && (
-            <div className="p-4 border-t bg-white">
-              <h1 className="text-xl font-bold mb-4">Videollamada</h1>
-
-              <div className="flex gap-4 mb-4">
-                <video
-                  ref={localVideoRef}
-                  autoPlay
-                  muted
-                  playsInline
-                  className="w-1/2 border rounded"
-                />
-                <video
-                  ref={remoteVideoRef}
-                  autoPlay
-                  playsInline
-                  className="w-1/2 border rounded"
-                />
-              </div>
-
-              <div className="flex gap-4">
-                <button
-                  onClick={startWebcam}
-                  className="bg-green-500 text-white px-4 py-2 rounded"
-                >
-                  Activar cámara
-                </button>
-                <button
-                  onClick={createCall}
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
-                >
-                  Crear llamada
-                </button>
-                <input
-                  value={callId}
-                  onChange={(e) => setCallId(e.target.value)}
-                  placeholder="ID de llamada"
-                  className="border px-2 py-1 rounded"
-                />
-                <button
-                  onClick={answerCall}
-                  className="bg-purple-500 text-white px-4 py-2 rounded"
-                >
-                  Responder llamada
-                </button>
-              </div>
-            </div>
-          )}
+          
 
 
       </div>
@@ -731,63 +712,70 @@ const [callId, setCallId] = useState('');
 
       {/* VENTANA MODAL PARA VIDEOLLAMADA */}
     {mostrarControlesVideo && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div className="bg-white p-6 rounded-lg w-11/12 max-w-5xl relative">
-      {/* Botón cerrar */}
-      <button
-        onClick={() => setMostrarControlesVideo(false)}
-        className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl font-bold"
-      >
-        &times;
-      </button>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="bg-red-900 p-6 rounded-lg w-11/12 max-w-5xl relative text-white">
+          {/* Botón cerrar */}
+          <button
+            onClick={endCall}
+            className="absolute top-2 right-2 text-gray-300 hover:text-white text-xl font-bold"
+          >
+            &times;
+          </button>
 
-      <h1 className="text-xl font-bold mb-4">Videollamada</h1>
+          <h1 className="text-xl font-bold mb-4">Videollamada</h1>
 
-      <div className="flex gap-4 mb-4">
-        <video
-          ref={localVideoRef}
-          autoPlay
-          muted
-          playsInline
-          className="w-1/2 border rounded"
-        />
-        <video
-          ref={remoteVideoRef}
-          autoPlay
-          playsInline
-          className="w-1/2 border rounded"
-        />
+          <div className="flex gap-4 mb-4">
+            <video
+              ref={localVideoRef}
+              autoPlay
+              muted
+              playsInline
+              className="w-1/2 border rounded"
+            />
+            <video
+              ref={remoteVideoRef}
+              autoPlay
+              playsInline
+              className="w-1/2 border rounded"
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-4">
+            <button
+              onClick={startWebcam}
+              className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded"
+            >
+              Activar cámara
+            </button>
+            <button
+              onClick={createCall}
+              className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded"
+            >
+              Crear llamada
+            </button>
+            <input
+              value={callId}
+              onChange={(e) => setCallId(e.target.value)}
+              placeholder="ID de llamada"
+              className="border px-2 py-1 rounded text-black"
+            />
+            <button
+              onClick={answerCall}
+              className="bg-yellow-300 hover:bg-yellow-400 text-black px-4 py-2 rounded"
+            >
+              Responder llamada
+            </button>
+            <button
+              onClick={endCall}
+              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
+            >
+              Colgar llamada
+            </button>
+          </div>
+        </div>
       </div>
+    )}
 
-      <div className="flex flex-wrap gap-4">
-        <button
-          onClick={startWebcam}
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
-          Activar cámara
-        </button>
-        <button
-          onClick={createCall}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Crear llamada
-        </button>
-        <input
-          value={callId}
-          onChange={(e) => setCallId(e.target.value)}
-          placeholder="ID de llamada"
-          className="border px-2 py-1 rounded"
-        />
-        <button
-          onClick={answerCall}
-          className="bg-purple-500 text-white px-4 py-2 rounded"
-        >
-          Responder llamada
-        </button>
-      </div>
-    </div>
-  </div>
-)}
 
 
 
