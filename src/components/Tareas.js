@@ -10,8 +10,8 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Tareas() {
   const [tareas, setTareas] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [taskItems, setTaskItems] = useState([]);
   const correo = localStorage.getItem("correo");
+  
   const obtenerTareas = () => {
     axios.get(`https://poi-back-igd5.onrender.com/api/tareas/${correo}`)
       .then(response => setTareas(response.data))
@@ -23,7 +23,7 @@ export default function Tareas() {
   }, []);  
 
   const filtrarIncompletas = () => {
-    setTareas(tareas.filter(tarea => !tarea.Completada));
+    setTareas(tareas.filter(tarea => !tarea.Terminada));
   };
 
   
@@ -43,17 +43,7 @@ function createNewTask(taskName) {
     .catch(err => console.error("Error al crear tarea:", err));
   }
 
-  function toggleTaskStatus(taskId, currentStatus) {
-  axios.put(`${process.env.REACT_APP_API_URL}/api/tareas/${taskId}`, {
-    Terminada: !currentStatus
-  })
-    .then(() => {
-      setTaskItems(taskItems.map(task =>
-        task.ID_Tarea === taskId ? { ...task, Terminada: !currentStatus } : task
-      ));
-    })
-    .catch(err => console.error("Error al actualizar tarea:", err));
-}
+ 
 
   return (
     <div className="bg-dark-custom text-white min-vh-100">
@@ -80,21 +70,27 @@ function createNewTask(taskName) {
 
       <TaskCreator createNewTask={createNewTask} />
 
-      <div className="contenedor-tareas">
-      <h2>Mis tareas</h2>
-      <div className="botones">
-        <button onClick={obtenerTareas}>🔄 Refrescar</button>
-        <button onClick={filtrarIncompletas}>❌ Solo incompletas</button>
-      </div>
+      <div className="container py-4">
+        <h1 className="magic-title">Lista de Tareas</h1>
 
-      <ul className="lista-tareas">
-        {tareas.map((tarea, index) => (
-          <li key={index} className={tarea.Completada ? 'tarea completada' : 'tarea incompleta'}>
-            {tarea.Titulo_Tarea}
-          </li>
-        ))}
-      </ul>
-    </div>
+        <TaskCreator createNewTask={createNewTask} />
+
+        <div className="contenedor-tareas mt-4">
+          <h2>Mis tareas</h2>
+          <div className="botones mb-3">
+            <button className="btn btn-light me-2" onClick={obtenerTareas}>🔄 Refrescar</button>
+            <button className="btn btn-outline-warning" onClick={filtrarIncompletas}>❌ Solo incompletas</button>
+          </div>
+
+          <ul className="lista-tareas list-group">
+            {tareas.map((tarea, index) => (
+              <li key={index} className={`list-group-item ${tarea.Terminada ? 'list-group-item-success' : 'list-group-item-danger'}`}>
+                {tarea.Titulo_Tarea}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
