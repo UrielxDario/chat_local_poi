@@ -26,14 +26,7 @@ export default function Tareas() {
     setTareas(tareas.filter(tarea => !tarea.Completada));
   };
 
-  useEffect(() => {
-
-  if(!correo) return;
-
-  axios.get(`${process.env.REACT_APP_API_URL}/api/tareas/${correo}`)
-    .then(res => setTaskItems(res.data))
-    .catch(err => console.error("Error al cargar tareas:", err));
-}, [correo]);
+  
 
 function createNewTask(taskName) {
   axios.post(`${process.env.REACT_APP_API_URL}/api/tareas`, {
