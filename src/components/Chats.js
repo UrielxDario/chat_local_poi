@@ -252,7 +252,7 @@ const [mensajes, setMensajes] = useState([]);
   
   useEffect(() => {
   if (messagesEndRef.current) {
-    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current.scrollIntoView({ behavior: "auto" });
   }
 }, [messagesByChat[selectedContact?.ID_Chat]]);
 
@@ -370,7 +370,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
           <ul className="dropdown-menu show position-absolute bg-light">
             <li><a className="dropdown-item" href="#">Mi Perfil</a></li>
             <li><a className="dropdown-item" href="#">Editar Perfil</a></li>
-            <li><a className="dropdown-item" href="#">Tareas</a></li>
+            <li><a className="dropdown-item" href="/Tareas.js">Tareas</a></li>
             <li><a className="dropdown-item" href="#">Recompensas</a></li>
             <li onClick={cerrarSesion} className="dropdown-item text-danger" style={{ cursor: "pointer" }}>
   Cerrar Sesión
@@ -446,7 +446,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
       </div>
 
 
-          <div className="py-6 px-20 overflow-auto h-3/4">{/* MENSAJES */}
+          <div className="py-6 px-20 overflow-y-auto h-3/4">{/* MENSAJES */}
            {mensajesActuales.map((message , index) => {
             console.log(message); // Esto debería mostrar el mensaje en consola
             return (
