@@ -77,7 +77,7 @@ router.get('/obtener-chats', async (req, res) => {
 
     // Obtener chats donde el usuario es participante
     const [chats] = await conexion.promise().query(`
-        SELECT c.ID_Chat, u.Username, u.Avatar_usu
+        SELECT c.ID_Chat, u.Username, u.Avatar_Blob
         FROM chat c
         JOIN chat_usuario cu ON c.ID_Chat = cu.ID_Chat
         JOIN usuario u ON cu.ID_Usuario = u.ID_Usuario
@@ -98,11 +98,11 @@ router.get('/obtener-chats', async (req, res) => {
       ID_Chat: chat.ID_Chat,
        receiver: {//Este receiver se lo agregue para la videollamada
           name: chat.Username,
-          img: chat.Avatar_usu,
+          img: chat.Avatar_Blob ? `data:image/jpeg;base64,${chat.Avatar_Blob.toString('base64')}` : null,
           // Puedes incluir más campos si lo deseas
         },
       name: chat.Username, // Aquí debes asegurarte que estás obteniendo el nombre correctamente
-      img: chat.Avatar_usu, // Y la imagen del usuario
+      img: chat.Avatar_Blob ? `data:image/jpeg;base64,${chat.Avatar_Blob.toString('base64')}` : null, // Y la imagen del usuario
       lastMessage: 'Último mensaje...', // Agrega lógica para obtener el último mensaje de cada chat
       lastMessageTime: 'hora'   // Agrega lógica para mostrar la hora del último mensaje
     }));
@@ -137,20 +137,27 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
     const { idChat } = req.params;
   
     try {
-      const [mensajes] = await conexion.promise().query(`
+      const [mensajesRaw] = await conexion.promise().query(`
         SELECT 
           m.ID_Mensaje,
           m.TextoMensaje,
           m.HoraFecha_Mensaje,
           u.Username,
-          u.Avatar_usu,
+          u.Avatar_Blob,
           u.ID_Usuario
         FROM mensaje m
         JOIN usuario u ON m.ID_Usuario = u.ID_Usuario
         WHERE m.ID_Chat = ?
         ORDER BY m.HoraFecha_Mensaje ASC
       `, [idChat]);
-  
+      
+      const mensajes = mensajesRaw.map(mensaje => ({
+      ...mensaje,
+      Avatar_Blob: mensaje.Avatar_Blob 
+        ? `data:image/jpeg;base64,${Buffer.from(mensaje.Avatar_Blob).toString('base64')}`
+        : null
+      }));
+
       return res.status(200).json({ mensajes });
     } catch (error) {
       console.error("Error al obtener mensajes:", error);

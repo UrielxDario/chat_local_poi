@@ -95,7 +95,7 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
           m.TextoMensaje,
           m.HoraFecha_Mensaje,
           u.Username,
-          u.Avatar_usu,
+          u.Avatar_Blob,
           u.ID_Usuario
         FROM mensaje m
         JOIN usuario u ON m.ID_Usuario = u.ID_Usuario

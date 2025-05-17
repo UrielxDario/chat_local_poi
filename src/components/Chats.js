@@ -440,7 +440,7 @@ const handleSelectChat = async (chat) => {
             console.log(messagesByChat); // Esto debería mostrar el mensaje en consola
             return (
               <div key={index} className={`flex mb-12 ${messagesByChat.sent ? "flex-row-reverse" : ""}`}>
-                <img src={`https://poi-back-igd5.onrender.com${messagesByChat.Avatar_usu}`} className="w-10 h-10 rounded-full" alt="User avatar" />
+                <img src={messagesByChat.Avatar_Blob} className="w-10 h-10 rounded-full" alt="User avatar" />
                 <div className="bg-white rounded-lg p-4 max-w-xs shadow">
                   <p>{messagesByChat.TextoMensaje}</p> {/* Asegúrate de que message.text no esté vacío */}
                 </div>
