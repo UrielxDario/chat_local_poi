@@ -12,48 +12,49 @@ export default function Tareas() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [taskItems, setTaskItems] = useState([]);
-  const correo = localStorage.getItem("correo" || "");
+  const [correo, setCorreo] = useState("");
     
-
-
   useEffect(() => {
+      const storedCorreo = localStorage.getItem("correo");
+      if (storedCorreo) {
+        setCorreo(storedCorreo);
+      } else {
+        navigate("/login"); // o tu ruta de inicio de sesión
+      }
+    }, []);
 
+    useEffect(() => {
+      fetchTasks(correo);
+      
+    }, [correo]);
+
+function fetchTasks(){
   if (!correo) {
-    navigate("/login"); // o la ruta que tengas para login
+    navigate("/login");  
     return;
   }
   
   axios.get(`${process.env.REACT_APP_API_URL}/api/tareas/${correo}`)
     .then(res => setTaskItems(res.data))
     .catch(err => console.error("Error al cargar tareas:", err));
-}, [correo]);
+}
 
-function createNewTask(taskName) {
-  axios.post(`${process.env.REACT_APP_API_URL}/api/tareas`, {
-    correo: correo,
-    Titulo_Tarea: taskName
-  })
-    .then(res => {
-      setTaskItems([...taskItems, {
-        ID_Tarea: res.data.id_tarea,
-        Titulo_Tarea: taskName,
-        Terminada: false
-      }]);
+ function createNewTask(taskName) {
+    axios.post(`${process.env.REACT_APP_API_URL}/api/tareas`, {
+      correo: correo,
+      Titulo_Tarea: taskName
     })
-    .catch(err => console.error("Error al crear tarea:", err));
+      .then(() => fetchTasks(correo)) // <-- volver a cargar tareas desde el servidor
+      .catch(err => console.error("Error al crear tarea:", err));
   }
 
   function toggleTaskStatus(taskId, currentStatus) {
-  axios.put(`${process.env.REACT_APP_API_URL}/api/tareas/${taskId}`, {
-    Terminada: !currentStatus
-  })
-    .then(() => {
-      setTaskItems(taskItems.map(task =>
-        task.ID_Tarea === taskId ? { ...task, Terminada: !currentStatus } : task
-      ));
+    axios.put(`${process.env.REACT_APP_API_URL}/api/tareas/${taskId}`, {
+      Terminada: !currentStatus
     })
-    .catch(err => console.error("Error al actualizar tarea:", err));
-}
+      .then(() => fetchTasks(correo)) // <-- volver a cargar tareas actualizadas
+      .catch(err => console.error("Error al actualizar tarea:", err));
+  }
 
   return (
     <div className="bg-dark-custom text-white min-vh-100">
