@@ -440,7 +440,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
 
 
           <div className="py-6 px-20 overflow-auto h-3/4">{/* MENSAJES */}
-           {messagesByChat[selectedContact.ID_Chat]?.map((message , index) => {
+           {mensajesActuales.map((message , index) => {
             console.log(message); // Esto debería mostrar el mensaje en consola
             return (
               <div key={index} className={`flex mb-12 ${message.sent ? "flex-row-reverse" : ""}`}>
