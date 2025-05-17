@@ -207,8 +207,8 @@ const [mensajes, setMensajes] = useState([]);
 
 
   useEffect(() => {
+  const intervalo = setInterval(() => {
     if (selectedContact?.ID_Chat) {
-      // Si hay un contacto seleccionado y tiene un ID de chat válido, obtenemos los mensajes
       fetch(`https://poi-back-igd5.onrender.com/api/obtener-mensajes/${selectedContact.ID_Chat}`)
         .then((res) => res.json())
         .then((data) => {
@@ -217,13 +217,15 @@ const [mensajes, setMensajes] = useState([]);
               ...prevMessages,
               [selectedContact.ID_Chat]: data.mensajes,
             }));
-          } else {
-            console.error('No se encontraron mensajes para este chat');
           }
         })
         .catch((err) => console.error("Error al obtener mensajes:", err));
     }
-  }, [selectedContact]); 
+  }, 5000); // cada 5 segundos
+
+  return () => clearInterval(intervalo); // Limpiar el intervalo al desmontar
+}, [selectedContact]);
+
   
   const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Chat] || [] : [];
   
