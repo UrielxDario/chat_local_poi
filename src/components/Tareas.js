@@ -8,15 +8,20 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 export default function Tareas() {
+  const navigate = useNavigate();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [taskItems, setTaskItems] = useState([]);
-  const correo = localStorage.getItem("correo");
+  const correo = localStorage.getItem("correo" || "");
     
 
 
   useEffect(() => {
 
-  if(!correo) return;
+  if (!correo) {
+    navigate("/login"); // o la ruta que tengas para login
+    return;
+  }
   
   axios.get(`${process.env.REACT_APP_API_URL}/api/tareas/${correo}`)
     .then(res => setTaskItems(res.data))
@@ -74,7 +79,9 @@ function createNewTask(taskName) {
       <h1 className="navbar-brand magic-title">Lista de Tareas</h1>
 
       <TaskCreator createNewTask={createNewTask} />
-
+      {taskItems.length === 0 ? (
+        <p className="text-center">No tienes tareas registradas.</p>
+      ) : (    
       <table className="table text-white">
         <thead>
           <tr><th>Tarea</th><th>Hecha</th></tr>
@@ -94,6 +101,7 @@ function createNewTask(taskName) {
           ))}
         </tbody>
       </table>
+      )}
     </div>
   );
 }
