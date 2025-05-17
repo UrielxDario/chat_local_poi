@@ -227,7 +227,6 @@ const [mensajes, setMensajes] = useState([]);
 }, [selectedContact]);
 
   
-  const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Chat] || [] : [];
   
   const handleSelectContact = async (contact) => {
     setSelectedContact(contact);
@@ -340,7 +339,8 @@ const handleSelectChat = async (chat) => {
   }
 };
 
-
+const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Chat] || [] : [];
+  
 
 
 
