@@ -2,13 +2,17 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 const multer = require("multer");
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 const path = require("path");
 
 const jwt = require('jsonwebtoken');
 
 
 
-// Configurar multer
+// Configurar multer//
+/*
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads/");
@@ -19,7 +23,8 @@ const storage = multer.diskStorage({
     cb(null, "avatar-" + uniqueSuffix + ext);  
   },
 });
-const upload = multer({ storage });
+*/
+
 
 
 
@@ -42,7 +47,7 @@ router.post("/verificar-correo", (req, res) => {
 });
 
 
-
+/*
 
 // Ruta para registrar usuario con imagen
 router.post("/register", upload.single("avatar"), (req, res) => {
@@ -87,7 +92,29 @@ router.post("/register", upload.single("avatar"), (req, res) => {
       }
     }
   );
+}); */
+
+// Ruta
+router.post("/register", upload.single("avatar"), async (req, res) => {
+  const { Username, Correo_Usu, Contra_Usu, FechaNacimiento_Usu, Casa_Usu, Rol_Usu, TextoBiografia_Usu } = req.body;
+
+  const avatarBlob = req.file ? req.file.buffer : null;
+
+  const sql = `
+    INSERT INTO usuario (Username, Correo_Usu, Contra_Usu, FechaNacimiento_Usu, Casa_Usu, Rol_Usu, TextoBiografia_Usu, Avatar_Blob)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(sql, [Username, Correo_Usu, Contra_Usu, FechaNacimiento_Usu, Casa_Usu, Rol_Usu, TextoBiografia_Usu, avatarBlob], (err, result) => {
+    if (err) {
+      console.error("Error al registrar usuario:", err);
+      return res.status(500).json({ mensaje: "Error en el servidor al registrar usuario." });
+    }
+
+    res.json({ mensaje: "Usuario registrado exitosamente" });
+  });
 });
+
 
 
 // Ruta de login

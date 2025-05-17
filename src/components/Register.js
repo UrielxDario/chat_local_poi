@@ -13,7 +13,7 @@ export default function Register() {
     const [correo, setCorreo] = useState("");
     const [house, setHouse] = useState("Gryffindor");
     const [role, setRole] = useState("estudiante");
-    const [formData, setFormData] = useState({ avatar: "" }); 
+    const [formData, setFormData] = useState({ avatar: null, avatarPreview: "" });
 
 
     const wrapperRef = useRef(null);
