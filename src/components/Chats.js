@@ -224,7 +224,7 @@ const [mensajes, setMensajes] = useState([]);
   }, 5000); // cada 5 segundos
 
   return () => clearInterval(intervalo); // Limpiar el intervalo al desmontar
-}, [selectedContact?.ID_Chat]);
+}, [selectedContact]);
 
   
   
@@ -250,7 +250,7 @@ const [mensajes, setMensajes] = useState([]);
   
 
   const handleSendMessage = async () => {
-    if (!messageText.trim() || !selectedContact.ID_Chat) return;
+    if (!messageText.trim() || !selectedContact) return;
   
     try {
       const response = await fetch("https://poi-back-igd5.onrender.com/send-message", {
@@ -259,7 +259,7 @@ const [mensajes, setMensajes] = useState([]);
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ID_Chat: selectedContact?.ID_Chat,
+          ID_Chat: selectedContact.ID_Chat,
           ID_Usuario: currentUser.ID_Usuario,
           TextoMensaje: messageText,
         }),
@@ -273,7 +273,7 @@ const [mensajes, setMensajes] = useState([]);
           sent: true,
           name: currentUser.Username,
           text: messageText,
-          img: currentUser.Avatar_Blob || null,
+          img: currentUser.avatar,
           time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
         console.log("Nuevo mensaje:", newMessage);
@@ -288,11 +288,7 @@ const [mensajes, setMensajes] = useState([]);
     }
   };
 
-  useEffect(() => {
-  if (selectedContact?.ID_Chat) {
-    setMessages(messagesByChat[selectedContact.ID_Chat] || []);
-  }
-}, [messagesByChat, selectedContact]);
+
   //Handle para la llamada
  const handleStartCall = () => {
   if (!chatSeleccionado || !receptorId) return;
@@ -444,16 +440,17 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
 
 
           <div className="py-6 px-20 overflow-auto h-3/4">{/* MENSAJES */}
-           {messagesByChat[selectedContact?.ID_Chat].map((msg, index) => (
-              <div key={index} className={msg.sent ? "message-sent" : "message-received"}>
-                <img src={msg.Avatar_Blob || msg.img} alt={msg.name} />
-                <div>
-                  <strong>{msg.name}</strong>
-                  <p>{msg.send ? msg.TextoMensaje : msg.text}</p>
-                  <span>{msg.time}</span>
+           {mensajesActuales.map((message , index) => {
+            console.log(message); // Esto debería mostrar el mensaje en consola
+            return (
+              <div key={index} className={`flex mb-12 ${message.sent ? "flex-row-reverse" : ""}`}>
+                <img src={message.Avatar_Blob} className="w-10 h-10 rounded-full" alt="User avatar" />
+                <div className="bg-white rounded-lg p-4 max-w-xs shadow">
+                  <p>{message.TextoMensaje}</p> {/* Asegúrate de que message.text no esté vacío */}
                 </div>
-              </div>
-            ))}
+              </div>  
+            );
+           })}
           </div>
 
           {/* MessageBar */}
