@@ -221,7 +221,7 @@ const [mensajes, setMensajes] = useState([]);
         })
         .catch((err) => console.error("Error al obtener mensajes:", err));
     }
-  }, 5000); // cada 5 segundos
+  }, 3000); // cada 5 segundos
 
   return () => clearInterval(intervalo); // Limpiar el intervalo al desmontar
 }, [selectedContact]);
