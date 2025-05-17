@@ -224,7 +224,7 @@ const [mensajes, setMensajes] = useState([]);
   }, 5000); // cada 5 segundos
 
   return () => clearInterval(intervalo); // Limpiar el intervalo al desmontar
-}, [selectedContact]);
+}, [selectedContact?.ID_Chat]);
 
   
   
@@ -250,7 +250,7 @@ const [mensajes, setMensajes] = useState([]);
   
 
   const handleSendMessage = async () => {
-    if (!messageText.trim() || !selectedContact) return;
+    if (!messageText.trim() || !selectedContact.ID_Chat) return;
   
     try {
       const response = await fetch("https://poi-back-igd5.onrender.com/send-message", {
@@ -259,7 +259,7 @@ const [mensajes, setMensajes] = useState([]);
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ID_Chat: selectedContact.ID_Chat,
+          ID_Chat: selectedContact?.ID_Chat,
           ID_Usuario: currentUser.ID_Usuario,
           TextoMensaje: messageText,
         }),
