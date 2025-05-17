@@ -395,7 +395,7 @@ const handleSelectChat = async (chat) => {
                 <img src={`https://poi-back-igd5.onrender.com${contacts.img}`} className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mr-4 border-2 border-yellow-300" alt={contacts.name} />
                 <div className="w-full overflow-hidden">
                   <div className="flex mb-1">
-                    <a className="flex-grow text-yellow-200 hover:text-yellow-400 transition-colors duration-200 font-medium cursor-pointer">{contact.name}</a>
+                    <a className="flex-grow text-yellow-200 hover:text-yellow-400 transition-colors duration-200 font-medium cursor-pointer">{contacts.name}</a>
                     <small className="font-light text-gray-300">{contacts.lastMessageTime}</small>
                   </div>
                   <small className="overflow-ellipsis overflow-hidden whitespace-nowrap block font-light text-gray-300">
