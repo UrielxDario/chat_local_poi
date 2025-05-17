@@ -80,9 +80,7 @@ function fetchTasks(){
       <h1 className="navbar-brand magic-title">Lista de Tareas</h1>
 
       <TaskCreator createNewTask={createNewTask} />
-      {taskItems.length === 0 ? (
-        <p className="text-center">No tienes tareas registradas.</p>
-      ) : (    
+       
       <table className="table text-white">
         <thead>
           <tr><th>Tarea</th><th>Hecha</th></tr>
@@ -102,7 +100,7 @@ function fetchTasks(){
           ))}
         </tbody>
       </table>
-      )}
+      
     </div>
   );
 }
