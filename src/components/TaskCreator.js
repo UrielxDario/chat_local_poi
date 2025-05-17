@@ -7,7 +7,7 @@ export const TaskCreator = ({ createNewTask }) => {
     e.preventDefault();
     if (newTaskName.trim()) {
       createNewTask(newTaskName);
-      setNewTaskName('');
+      setNewTaskName("");
     }
   };
 

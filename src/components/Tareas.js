@@ -18,15 +18,13 @@ export default function Tareas() {
       const storedCorreo = localStorage.getItem("correo");
       if (storedCorreo) {
         setCorreo(storedCorreo);
+        fetchTasks(storedCorreo)
       } else {
         navigate("/login"); // o tu ruta de inicio de sesión
       }
     }, []);
 
-    useEffect(() => {
-      fetchTasks(correo);
-      
-    }, [correo]);
+    
 
 function fetchTasks(correo){
   if (!correo) {
@@ -71,7 +69,8 @@ function fetchTasks(correo){
               <li><a className="dropdown-item" href="#">Tareas</a></li>
               <li><a className="dropdown-item" href="#">Recompensas</a></li>
               <li><a className="dropdown-item" ><Link to="/chats"> Chats</Link></a></li>
-              <li><a className="dropdown-item text-danger" href="#">Cerrar Sesión</a></li>
+              <li><button className="dropdown-item text-danger" onClick={() => {localStorage.removeItem("correo"); 
+              navigate("/login"); }} > Cerrar Sesión </button> </li>
             </ul>
           )}
         </div>

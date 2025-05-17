@@ -6,7 +6,7 @@ const db = require('../db'); // tu conexión MySQL
 router.get('/:correo', (req, res) => {
   const correo = req.params.correo;
 
-  const getUserQuery = 'SELECT ID_Usuario FROM usuario WHERE Correo = ?';
+  const getUserQuery = 'SELECT ID_Usuario FROM usuario WHERE Correo_usu = ?';
   db.query(getUserQuery, [correo], (err, results) => {
     if (err) return res.status(500).json({ error: 'Error al buscar usuario' });
     if (results.length === 0) return res.status(404).json({ error: 'usuario no encontrado' });
