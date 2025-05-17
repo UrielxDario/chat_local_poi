@@ -390,16 +390,16 @@ const handleSelectChat = async (chat) => {
           {contacts.length === 0 ? (
             <p>No tienes chats disponibles</p>
           ) : (
-            contacts.map((contact, index) => (
-              <div key={index} className="flex bg-red-900 rounded-lg p-4 mb-4 hover:bg-red-800 transition-colors duration-200" onClick={() => handleSelectContact(contact)}>
-                <img src={`https://poi-back-igd5.onrender.com${contact.img}`} className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mr-4 border-2 border-yellow-300" alt={contact.name} />
+            contacts.map((contacts, index) => (
+              <div key={index} className="flex bg-red-900 rounded-lg p-4 mb-4 hover:bg-red-800 transition-colors duration-200" onClick={() => handleSelectContact(contacts)}>
+                <img src={`https://poi-back-igd5.onrender.com${contacts.img}`} className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mr-4 border-2 border-yellow-300" alt={contacts.name} />
                 <div className="w-full overflow-hidden">
                   <div className="flex mb-1">
                     <a className="flex-grow text-yellow-200 hover:text-yellow-400 transition-colors duration-200 font-medium cursor-pointer">{contact.name}</a>
-                    <small className="font-light text-gray-300">{contact.lastMessageTime}</small>
+                    <small className="font-light text-gray-300">{contacts.lastMessageTime}</small>
                   </div>
                   <small className="overflow-ellipsis overflow-hidden whitespace-nowrap block font-light text-gray-300">
-                    {contact.lastMessage}
+                    {contacts.lastMessage}
                   </small>
                 </div>
               </div>

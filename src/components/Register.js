@@ -37,7 +37,6 @@ export default function Register() {
     }, []);
 
 
-
     const handleFileChange = (e) => {
       const file = e.target.files[0];
       setFormData({
@@ -45,7 +44,6 @@ export default function Register() {
         avatar: URL.createObjectURL(file),
       });
     };
-  
 
     //Para Subir el registro
     const handleRegister = async (e) => {
