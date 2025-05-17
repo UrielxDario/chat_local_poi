@@ -273,7 +273,7 @@ const [mensajes, setMensajes] = useState([]);
           sent: true,
           name: currentUser.Username,
           text: messageText,
-          img: currentUser.avatar,
+          img: currentUser.Avatar_Blob || null,
           time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
         console.log("Nuevo mensaje:", newMessage);
@@ -288,7 +288,11 @@ const [mensajes, setMensajes] = useState([]);
     }
   };
 
-
+  useEffect(() => {
+  if (selectedContact?.ID_Chat) {
+    setMessages(messagesByChat[selectedContact.ID_Chat] || []);
+  }
+}, [messagesByChat, selectedContact]);
   //Handle para la llamada
  const handleStartCall = () => {
   if (!chatSeleccionado || !receptorId) return;
@@ -445,7 +449,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
                 <img src={msg.Avatar_Blob || msg.img} alt={msg.name} />
                 <div>
                   <strong>{msg.name}</strong>
-                  <p>{msg.TextoMensaje || msg.text}</p>
+                  <p>{msg.send ? msg.TextoMensaje : msg.text}</p>
                   <span>{msg.time}</span>
                 </div>
               </div>
