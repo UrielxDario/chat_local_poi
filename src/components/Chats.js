@@ -694,16 +694,16 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
       {/* VENTANA MODAL PARA VIDEOLLAMADA */}
     {mostrarControlesVideo && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div className="bg-[#7b1e3a] text-white p-6 rounded-lg w-11/12 max-w-5xl relative shadow-2xl border border-white/30">
+    <div className="bg-red-800 p-6 rounded-lg w-11/12 max-w-5xl relative">
       {/* Botón cerrar */}
       <button
         onClick={() => setMostrarControlesVideo(false)}
-        className="absolute top-2 right-2 text-white hover:text-gray-300 text-2xl font-bold"
+        className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl font-bold"
       >
         &times;
       </button>
 
-      <h1 className="text-2xl font-bold mb-4">Videollamada</h1>
+      <h1 className="text-xl font-bold mb-4">Videollamada</h1>
 
       <div className="flex gap-4 mb-4">
         <video
@@ -711,26 +711,26 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
           autoPlay
           muted
           playsInline
-          className="w-1/2 border rounded shadow"
+          className="w-1/2 border rounded"
         />
         <video
           ref={remoteVideoRef}
           autoPlay
           playsInline
-          className="w-1/2 border rounded shadow"
+          className="w-1/2 border rounded"
         />
       </div>
 
       <div className="flex flex-wrap gap-4">
         <button
           onClick={startWebcam}
-          className="bg-[#d4af37] text-black font-semibold px-4 py-2 rounded hover:bg-yellow-400"
+          className="bg-yellow-500 text-white px-4 py-2 rounded"
         >
           Activar cámara
         </button>
         <button
           onClick={createCall}
-          className="bg-[#c0c0c0] text-black font-semibold px-4 py-2 rounded hover:bg-gray-300"
+          className="bg-orange-500 text-white px-4 py-2 rounded"
         >
           Crear llamada
         </button>
@@ -738,31 +738,25 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
           value={callId}
           onChange={(e) => setCallId(e.target.value)}
           placeholder="ID de llamada"
-          className="border px-2 py-1 rounded text-black"
+          className="border px-2 py-1 rounded"
         />
         <button
           onClick={answerCall}
-          className="bg-[#d4af37] text-black font-semibold px-4 py-2 rounded hover:bg-yellow-400"
+          className="bg-gray-300 text-white px-4 py-2 rounded"
         >
           Responder llamada
         </button>
         <button
           onClick={colgarLlamada}
-          className="bg-[#c0c0c0] text-black font-semibold px-4 py-2 rounded hover:bg-gray-300"
+          className="bg-red-500 text-white px-4 py-2 rounded"
         >
           Colgar llamada
         </button>
+
       </div>
     </div>
   </div>
 )}
-
-
-
-
-
-
-
 
     </div>
 
