@@ -320,200 +320,110 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
 
 //para esconder o mostrar todo esto
 ////////PARA LA LLAMADA AHORA SI BIEN DE AQUI PA ABAJO
-const [mostrarControlesVideo, setMostrarControlesVideo] = useState(false);
+ const [callId, setCallId] = useState('');
+  const [pc] = useState(new RTCPeerConnection(servers));
+  const localVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
+  const localStream = useRef(null);
+  const remoteStream = useRef(new MediaStream());
 
-const [callId, setCallId] = useState('');
-const [pc, setPc] = useState(null);
-const localVideoRef = useRef(null);
-const remoteVideoRef = useRef(null);
-const localStream = useRef(null);
-const remoteStream = useRef(new MediaStream());
-
-const startWebcam = async () => {
-  try {
-    // Solicita acceso a cámara y micrófono
+  const startWebcam = async () => {
     localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
-    // Mostrar video local directamente
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = localStream.current;
-    }
+    localStream.current.getTracks().forEach(track => {
+      pc.addTrack(track, localStream.current);
+    });
 
-    // Si ya existe una conexión, agregarle las pistas
-    if (pc) {
-      localStream.current.getTracks().forEach(track => {
-        pc.addTrack(track, localStream.current);
+    pc.ontrack = (event) => {
+      event.streams[0].getTracks().forEach(track => {
+        remoteStream.current.addTrack(track);
       });
+    };
 
-      // Preparar stream remoto vacío
-      remoteStream.current = new MediaStream();
-
-      pc.ontrack = (event) => {
-        event.streams[0].getTracks().forEach(track => {
-          remoteStream.current.addTrack(track);
-        });
-
-        if (remoteVideoRef.current && !remoteVideoRef.current.srcObject) {
-          remoteVideoRef.current.srcObject = remoteStream.current;
-        }
-      };
-    }
-  } catch (err) {
-    console.error('Error al acceder a la cámara:', err);
-  }
-};
-
-const createCall = async () => {
-  await startWebcam();
-
-  const nuevaConexion = new RTCPeerConnection(servers);
-  setPc(nuevaConexion);
-
-  // Preparar stream remoto vacío
-      remoteStream.current = new MediaStream();
-
-      pc.ontrack = (event) => {
-        event.streams[0].getTracks().forEach(track => {
-          remoteStream.current.addTrack(track);
-        });
-
-        if (remoteVideoRef.current && !remoteVideoRef.current.srcObject) {
-          remoteVideoRef.current.srcObject = remoteStream.current;
-        }
-      };
-
-  localStream.current.getTracks().forEach(track => {
-  nuevaConexion.addTrack(track, localStream.current);
-});
-
-
-  const callDoc = doc(collection(db, 'calls'));
-  const offerCandidates = collection(callDoc, 'offerCandidates');
-  const answerCandidates = collection(callDoc, 'answerCandidates');
-
-  setCallId(callDoc.id);
-
-  nuevaConexion.onicecandidate = async (event) => {
-    if (event.candidate) {
-      await addDoc(offerCandidates, event.candidate.toJSON());
-    }
+    localVideoRef.current.srcObject = localStream.current;
+    remoteVideoRef.current.srcObject = remoteStream.current;
   };
 
-  const offerDescription = await nuevaConexion.createOffer();
-  await nuevaConexion.setLocalDescription(offerDescription);
+  const createCall = async () => {
+    const callDoc = doc(collection(db, 'calls'));
+    const offerCandidates = collection(callDoc, 'offerCandidates');
+    const answerCandidates = collection(callDoc, 'answerCandidates');
 
-  const offer = {
-    sdp: offerDescription.sdp,
-    type: offerDescription.type,
-  };
+    setCallId(callDoc.id);
 
-  await setDoc(callDoc, { offer });
+    // ICE candidates
+    pc.onicecandidate = async (event) => {
+      if (event.candidate) {
+        await addDoc(offerCandidates, event.candidate.toJSON());
+      }
+    };
 
-  // Escuchar respuesta remota
-  onSnapshot(callDoc, (snapshot) => {
-    const data = snapshot.data();
-    if (!nuevaConexion.currentRemoteDescription && data?.answer) {
-      const answerDescription = new RTCSessionDescription(data.answer);
-      nuevaConexion.setRemoteDescription(answerDescription);
-    }
-  });
+    const offerDescription = await pc.createOffer();
+    await pc.setLocalDescription(offerDescription);
 
-  // ICE remotas
-  onSnapshot(answerCandidates, (snapshot) => {
-    snapshot.docChanges().forEach(change => {
-      if (change.type === 'added') {
-        const data = change.doc.data();
-        nuevaConexion.addIceCandidate(new RTCIceCandidate(data));
+    const offer = {
+      sdp: offerDescription.sdp,
+      type: offerDescription.type,
+    };
+
+    await setDoc(callDoc, { offer });
+
+    // Listen for answer
+    onSnapshot(callDoc, (snapshot) => {
+      const data = snapshot.data();
+      if (!pc.currentRemoteDescription && data?.answer) {
+        const answerDescription = new RTCSessionDescription(data.answer);
+        pc.setRemoteDescription(answerDescription);
       }
     });
-  });
-};
 
-const answerCall = async () => {
-  await startWebcam();
-
-  const nuevaConexion = new RTCPeerConnection(servers);
-  setPc(nuevaConexion);
-
-  // Preparar stream remoto vacío
-      remoteStream.current = new MediaStream();
-
-      pc.ontrack = (event) => {
-        event.streams[0].getTracks().forEach(track => {
-          remoteStream.current.addTrack(track);
-        });
-
-        if (remoteVideoRef.current && !remoteVideoRef.current.srcObject) {
-          remoteVideoRef.current.srcObject = remoteStream.current;
+    // Listen for remote ICE
+    onSnapshot(answerCandidates, (snapshot) => {
+      snapshot.docChanges().forEach(change => {
+        if (change.type === 'added') {
+          const data = change.doc.data();
+          pc.addIceCandidate(new RTCIceCandidate(data));
         }
-      };
-
-      
-
-  localStream.current.getTracks().forEach(track => {
-  nuevaConexion.addTrack(track, localStream.current);
-});
-
-
-  const callDoc = doc(db, 'calls', callId);
-  const offerCandidates = collection(callDoc, 'offerCandidates');
-  const answerCandidates = collection(callDoc, 'answerCandidates');
-
-  nuevaConexion.onicecandidate = async (event) => {
-    if (event.candidate) {
-      await addDoc(answerCandidates, event.candidate.toJSON());
-    }
-  };
-
-  const callData = (await getDoc(callDoc)).data();
-
-  const offerDescription = callData.offer;
-  await nuevaConexion.setRemoteDescription(new RTCSessionDescription(offerDescription));
-
-  const answerDescription = await nuevaConexion.createAnswer();
-  await nuevaConexion.setLocalDescription(answerDescription);
-
-  const answer = {
-    type: answerDescription.type,
-    sdp: answerDescription.sdp,
-  };
-
-  await updateDoc(callDoc, { answer });
-
-  // ICE remotas
-  onSnapshot(offerCandidates, (snapshot) => {
-    snapshot.docChanges().forEach(change => {
-      if (change.type === 'added') {
-        const data = change.doc.data();
-        nuevaConexion.addIceCandidate(new RTCIceCandidate(data));
-      }
+      });
     });
-  });
-};
+  };
 
-const endCall = () => {
-  if (localStream.current) {
-    localStream.current.getTracks().forEach((track) => track.stop());
-  }
+  const answerCall = async () => {
+    const callDoc = doc(db, 'calls', callId);
+    const offerCandidates = collection(callDoc, 'offerCandidates');
+    const answerCandidates = collection(callDoc, 'answerCandidates');
 
-  if (remoteVideoRef.current?.srcObject) {
-    remoteVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
-    remoteVideoRef.current.srcObject = null;
-  }
+    pc.onicecandidate = async (event) => {
+      if (event.candidate) {
+        await addDoc(answerCandidates, event.candidate.toJSON());
+      }
+    };
 
-  if (localVideoRef.current?.srcObject) {
-    localVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
-    localVideoRef.current.srcObject = null;
-  }
+    const callData = (await getDoc(callDoc)).data();
 
-  if (pc) {
-    pc.close();
-    setPc(null);
-  }
+    const offerDescription = callData.offer;
+    await pc.setRemoteDescription(new RTCSessionDescription(offerDescription));
 
-  setMostrarControlesVideo(false);
-};
+    const answerDescription = await pc.createAnswer();
+    await pc.setLocalDescription(answerDescription);
 
+    const answer = {
+      type: answerDescription.type,
+      sdp: answerDescription.sdp,
+    };
+
+    await updateDoc(callDoc, { answer });
+
+    // Listen for remote ICE
+    onSnapshot(offerCandidates, (snapshot) => {
+      snapshot.docChanges().forEach(change => {
+        if (change.type === 'added') {
+          const data = change.doc.data();
+          pc.addIceCandidate(new RTCIceCandidate(data));
+        }
+      });
+    });
+  };
 
 
 
@@ -743,69 +653,64 @@ const endCall = () => {
 
       {/* VENTANA MODAL PARA VIDEOLLAMADA */}
     {mostrarControlesVideo && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-        <div className="bg-red-900 p-6 rounded-lg w-11/12 max-w-5xl relative text-white">
-          {/* Botón cerrar */}
-          <button
-            onClick={endCall}
-            className="absolute top-2 right-2 text-gray-300 hover:text-white text-xl font-bold"
-          >
-            &times;
-          </button>
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white p-6 rounded-lg w-11/12 max-w-5xl relative">
+      {/* Botón cerrar */}
+      <button
+        onClick={() => setMostrarControlesVideo(false)}
+        className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl font-bold"
+      >
+        &times;
+      </button>
 
-          <h1 className="text-xl font-bold mb-4">Videollamada</h1>
+      <h1 className="text-xl font-bold mb-4">Videollamada</h1>
 
-          <div className="flex gap-4 mb-4">
-            <video
-              ref={localVideoRef}
-              autoPlay
-              muted
-              playsInline
-              className="w-1/2 border rounded"
-            />
-            <video
-              ref={remoteVideoRef}
-              autoPlay
-              playsInline
-              className="w-1/2 border rounded"
-            />
-          </div>
-
-          <div className="flex flex-wrap gap-4">
-            <button
-              onClick={startWebcam}
-              className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded"
-            >
-              Activar cámara
-            </button>
-            <button
-              onClick={createCall}
-              className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded"
-            >
-              Crear llamada
-            </button>
-            <input
-              value={callId}
-              onChange={(e) => setCallId(e.target.value)}
-              placeholder="ID de llamada"
-              className="border px-2 py-1 rounded text-black"
-            />
-            <button
-              onClick={answerCall}
-              className="bg-yellow-300 hover:bg-yellow-400 text-black px-4 py-2 rounded"
-            >
-              Responder llamada
-            </button>
-            <button
-              onClick={endCall}
-              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
-            >
-              Colgar llamada
-            </button>
-          </div>
-        </div>
+      <div className="flex gap-4 mb-4">
+        <video
+          ref={localVideoRef}
+          autoPlay
+          muted
+          playsInline
+          className="w-1/2 border rounded"
+        />
+        <video
+          ref={remoteVideoRef}
+          autoPlay
+          playsInline
+          className="w-1/2 border rounded"
+        />
       </div>
-    )}
+
+      <div className="flex flex-wrap gap-4">
+        <button
+          onClick={startWebcam}
+          className="bg-green-500 text-white px-4 py-2 rounded"
+        >
+          Activar cámara
+        </button>
+        <button
+          onClick={createCall}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Crear llamada
+        </button>
+        <input
+          value={callId}
+          onChange={(e) => setCallId(e.target.value)}
+          placeholder="ID de llamada"
+          className="border px-2 py-1 rounded"
+        />
+        <button
+          onClick={answerCall}
+          className="bg-purple-500 text-white px-4 py-2 rounded"
+        >
+          Responder llamada
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
 
 
