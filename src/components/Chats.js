@@ -23,7 +23,8 @@ import {
   getDoc,
   updateDoc,
   onSnapshot,
-  addDoc
+  addDoc,
+  deleteDoc 
 } from 'firebase/firestore';
 
 //Servidores stun para la llamada ahora si bien
