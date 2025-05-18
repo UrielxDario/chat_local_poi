@@ -330,32 +330,36 @@ const localStream = useRef(null);
 const remoteStream = useRef(new MediaStream());
 
 const startWebcam = async () => {
-  localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+  try {
+    // Solicita acceso a cámara y micrófono
+    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
-  if (!pc) return;
-
-  // Agregar pistas locales a la conexión
-  localStream.current.getTracks().forEach(track => {
-    pc.addTrack(track, localStream.current);
-  });
-
-  // Preparar stream remoto vacío
-  remoteStream.current = new MediaStream();
-
-  // Manejar pistas remotas
-  pc.ontrack = (event) => {
-    event.streams[0].getTracks().forEach(track => {
-      remoteStream.current.addTrack(track);
-    });
-
-    if (remoteVideoRef.current && !remoteVideoRef.current.srcObject) {
-      remoteVideoRef.current.srcObject = remoteStream.current;
+    // Mostrar video local directamente
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = localStream.current;
     }
-  };
 
-  // Mostrar el video local
-  if (localVideoRef.current) {
-    localVideoRef.current.srcObject = localStream.current;
+    // Si ya existe una conexión, agregarle las pistas
+    if (pc) {
+      localStream.current.getTracks().forEach(track => {
+        pc.addTrack(track, localStream.current);
+      });
+
+      // Preparar stream remoto vacío
+      remoteStream.current = new MediaStream();
+
+      pc.ontrack = (event) => {
+        event.streams[0].getTracks().forEach(track => {
+          remoteStream.current.addTrack(track);
+        });
+
+        if (remoteVideoRef.current && !remoteVideoRef.current.srcObject) {
+          remoteVideoRef.current.srcObject = remoteStream.current;
+        }
+      };
+    }
+  } catch (err) {
+    console.error('Error al acceder a la cámara:', err);
   }
 };
 
