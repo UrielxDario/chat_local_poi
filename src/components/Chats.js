@@ -290,38 +290,9 @@ const [mensajes, setMensajes] = useState([]);
   };
 
 
-  //Handle para la llamada
- const handleStartCall = () => {
-  if (!chatSeleccionado || !receptorId) return;
-
-  const callId = `llamada-${user.id}-${receptorId}-${Date.now()}`;
-
-  socket.emit('startCall', {
-    senderId: user.id,
-    receiverId: receptorId,
-    callId,
-  });
-
-  navigate(`/stream-call/${callId}`);
-};
 
 
 
-useEffect(() => {
-  if (!user?.id) return;
-
-  // Registrar al usuario al conectar
-  socket.emit("registerUser", user.id);
-
-  // Escuchar llamadas entrantes
-  socket.on(`incomingCall-${user.id}`, ({ senderId, callId }) => {
-    setIncomingCall({ sender: senderId, callId });
-  });
-
-  return () => {
-    socket.off(`incomingCall-${user.id}`);
-  };
-}, [user]);
 
 //Handle para seleccionar el chat y su id del otro usuario
 const handleSelectChat = async (chat) => {
@@ -348,141 +319,155 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
 ////////PARA LA LLAMADA AHORA SI BIEN DE AQUI PA ABAJO
 
 //para esconder o mostrar todo esto
-  const [mostrarControlesVideo, setMostrarControlesVideo] = useState(false);
-
+////////PARA LA LLAMADA AHORA SI BIEN DE AQUI PA ABAJO
+const [mostrarControlesVideo, setMostrarControlesVideo] = useState(false);
 
 const [callId, setCallId] = useState('');
-  const [pc] = useState(new RTCPeerConnection(servers));
-  const localVideoRef = useRef(null);
-  const remoteVideoRef = useRef(null);
-  const localStream = useRef(null);
-  const remoteStream = useRef(new MediaStream());
+const [pc, setPc] = useState(null);
+const localVideoRef = useRef(null);
+const remoteVideoRef = useRef(null);
+const localStream = useRef(null);
+const remoteStream = useRef(new MediaStream());
 
-  const startWebcam = async () => {
-    localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+const startWebcam = async () => {
+  localStream.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
-    localStream.current.getTracks().forEach(track => {
-      pc.addTrack(track, localStream.current);
+  if (!pc) return;
+
+  // Agregar pistas locales a la conexión
+  localStream.current.getTracks().forEach(track => {
+    pc.addTrack(track, localStream.current);
+  });
+
+  // Preparar stream remoto vacío
+  remoteStream.current = new MediaStream();
+
+  // Manejar pistas remotas
+  pc.ontrack = (event) => {
+    event.streams[0].getTracks().forEach(track => {
+      remoteStream.current.addTrack(track);
     });
 
-    pc.ontrack = (event) => {
-      event.streams[0].getTracks().forEach(track => {
-        remoteStream.current.addTrack(track);
-      });
-    };
+    if (remoteVideoRef.current && !remoteVideoRef.current.srcObject) {
+      remoteVideoRef.current.srcObject = remoteStream.current;
+    }
+  };
 
+  // Mostrar el video local
+  if (localVideoRef.current) {
     localVideoRef.current.srcObject = localStream.current;
-    remoteVideoRef.current.srcObject = remoteStream.current;
+  }
+};
+
+const createCall = async () => {
+  const nuevaConexion = new RTCPeerConnection(servers);
+  setPc(nuevaConexion);
+
+  const callDoc = doc(collection(db, 'calls'));
+  const offerCandidates = collection(callDoc, 'offerCandidates');
+  const answerCandidates = collection(callDoc, 'answerCandidates');
+
+  setCallId(callDoc.id);
+
+  nuevaConexion.onicecandidate = async (event) => {
+    if (event.candidate) {
+      await addDoc(offerCandidates, event.candidate.toJSON());
+    }
   };
 
-  const createCall = async () => {
-    const callDoc = doc(collection(db, 'calls'));
-    const offerCandidates = collection(callDoc, 'offerCandidates');
-    const answerCandidates = collection(callDoc, 'answerCandidates');
+  const offerDescription = await nuevaConexion.createOffer();
+  await nuevaConexion.setLocalDescription(offerDescription);
 
-    setCallId(callDoc.id);
-
-    // ICE candidates
-    pc.onicecandidate = async (event) => {
-      if (event.candidate) {
-        await addDoc(offerCandidates, event.candidate.toJSON());
-      }
-    };
-
-    const offerDescription = await pc.createOffer();
-    await pc.setLocalDescription(offerDescription);
-
-    const offer = {
-      sdp: offerDescription.sdp,
-      type: offerDescription.type,
-    };
-
-    await setDoc(callDoc, { offer });
-
-    // Listen for answer
-    onSnapshot(callDoc, (snapshot) => {
-      const data = snapshot.data();
-      if (!pc.currentRemoteDescription && data?.answer) {
-        const answerDescription = new RTCSessionDescription(data.answer);
-        pc.setRemoteDescription(answerDescription);
-      }
-    });
-
-    // Listen for remote ICE
-    onSnapshot(answerCandidates, (snapshot) => {
-      snapshot.docChanges().forEach(change => {
-        if (change.type === 'added') {
-          const data = change.doc.data();
-          pc.addIceCandidate(new RTCIceCandidate(data));
-        }
-      });
-    });
+  const offer = {
+    sdp: offerDescription.sdp,
+    type: offerDescription.type,
   };
 
-  const answerCall = async () => {
-    const callDoc = doc(db, 'calls', callId);
-    const offerCandidates = collection(callDoc, 'offerCandidates');
-    const answerCandidates = collection(callDoc, 'answerCandidates');
+  await setDoc(callDoc, { offer });
 
-    pc.onicecandidate = async (event) => {
-      if (event.candidate) {
-        await addDoc(answerCandidates, event.candidate.toJSON());
+  // Escuchar respuesta remota
+  onSnapshot(callDoc, (snapshot) => {
+    const data = snapshot.data();
+    if (!nuevaConexion.currentRemoteDescription && data?.answer) {
+      const answerDescription = new RTCSessionDescription(data.answer);
+      nuevaConexion.setRemoteDescription(answerDescription);
+    }
+  });
+
+  // ICE remotas
+  onSnapshot(answerCandidates, (snapshot) => {
+    snapshot.docChanges().forEach(change => {
+      if (change.type === 'added') {
+        const data = change.doc.data();
+        nuevaConexion.addIceCandidate(new RTCIceCandidate(data));
       }
-    };
-
-    const callData = (await getDoc(callDoc)).data();
-
-    const offerDescription = callData.offer;
-    await pc.setRemoteDescription(new RTCSessionDescription(offerDescription));
-
-    const answerDescription = await pc.createAnswer();
-    await pc.setLocalDescription(answerDescription);
-
-    const answer = {
-      type: answerDescription.type,
-      sdp: answerDescription.sdp,
-    };
-
-    await updateDoc(callDoc, { answer });
-
-    // Listen for remote ICE
-    onSnapshot(offerCandidates, (snapshot) => {
-      snapshot.docChanges().forEach(change => {
-        if (change.type === 'added') {
-          const data = change.doc.data();
-          pc.addIceCandidate(new RTCIceCandidate(data));
-        }
-      });
     });
+  });
+};
+
+const answerCall = async () => {
+  const nuevaConexion = new RTCPeerConnection(servers);
+  setPc(nuevaConexion);
+
+  const callDoc = doc(db, 'calls', callId);
+  const offerCandidates = collection(callDoc, 'offerCandidates');
+  const answerCandidates = collection(callDoc, 'answerCandidates');
+
+  nuevaConexion.onicecandidate = async (event) => {
+    if (event.candidate) {
+      await addDoc(answerCandidates, event.candidate.toJSON());
+    }
   };
 
+  const callData = (await getDoc(callDoc)).data();
 
-  const endCall = () => {
-  // Detener las pistas de la cámara y micrófono
+  const offerDescription = callData.offer;
+  await nuevaConexion.setRemoteDescription(new RTCSessionDescription(offerDescription));
+
+  const answerDescription = await nuevaConexion.createAnswer();
+  await nuevaConexion.setLocalDescription(answerDescription);
+
+  const answer = {
+    type: answerDescription.type,
+    sdp: answerDescription.sdp,
+  };
+
+  await updateDoc(callDoc, { answer });
+
+  // ICE remotas
+  onSnapshot(offerCandidates, (snapshot) => {
+    snapshot.docChanges().forEach(change => {
+      if (change.type === 'added') {
+        const data = change.doc.data();
+        nuevaConexion.addIceCandidate(new RTCIceCandidate(data));
+      }
+    });
+  });
+};
+
+const endCall = () => {
   if (localStream.current) {
     localStream.current.getTracks().forEach((track) => track.stop());
   }
 
-  // Detener el video remoto
   if (remoteVideoRef.current?.srcObject) {
     remoteVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
     remoteVideoRef.current.srcObject = null;
   }
 
-  // Detener el video local
   if (localVideoRef.current?.srcObject) {
     localVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
     localVideoRef.current.srcObject = null;
   }
 
-  // Cerrar la conexión peer
-  pc.close();
+  if (pc) {
+    pc.close();
+    setPc(null);
+  }
 
-  // Resetear el objeto RTCPeerConnection si vas a hacer otra llamada después
-  // Nota: Tendrías que re-crear el objeto si necesitas llamar de nuevo
-
-  setMostrarControlesVideo(false); // Cierra la ventana modal
+  setMostrarControlesVideo(false);
 };
+
 
 
 
