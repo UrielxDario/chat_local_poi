@@ -364,8 +364,28 @@ const startWebcam = async () => {
 };
 
 const createCall = async () => {
+  await startWebcam();
+
   const nuevaConexion = new RTCPeerConnection(servers);
   setPc(nuevaConexion);
+
+  // Preparar stream remoto vacío
+      remoteStream.current = new MediaStream();
+
+      pc.ontrack = (event) => {
+        event.streams[0].getTracks().forEach(track => {
+          remoteStream.current.addTrack(track);
+        });
+
+        if (remoteVideoRef.current && !remoteVideoRef.current.srcObject) {
+          remoteVideoRef.current.srcObject = remoteStream.current;
+        }
+      };
+
+  localStream.current.getTracks().forEach(track => {
+  nuevaConexion.addTrack(track, localStream.current);
+});
+
 
   const callDoc = doc(collection(db, 'calls'));
   const offerCandidates = collection(callDoc, 'offerCandidates');
@@ -410,8 +430,30 @@ const createCall = async () => {
 };
 
 const answerCall = async () => {
+  await startWebcam();
+
   const nuevaConexion = new RTCPeerConnection(servers);
   setPc(nuevaConexion);
+
+  // Preparar stream remoto vacío
+      remoteStream.current = new MediaStream();
+
+      pc.ontrack = (event) => {
+        event.streams[0].getTracks().forEach(track => {
+          remoteStream.current.addTrack(track);
+        });
+
+        if (remoteVideoRef.current && !remoteVideoRef.current.srcObject) {
+          remoteVideoRef.current.srcObject = remoteStream.current;
+        }
+      };
+
+      
+
+  localStream.current.getTracks().forEach(track => {
+  nuevaConexion.addTrack(track, localStream.current);
+});
+
 
   const callDoc = doc(db, 'calls', callId);
   const offerCandidates = collection(callDoc, 'offerCandidates');
