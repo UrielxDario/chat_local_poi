@@ -694,7 +694,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
       {/* VENTANA MODAL PARA VIDEOLLAMADA */}
     {mostrarControlesVideo && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div className="bg-red-800 p-6 rounded-lg w-11/12 max-w-5xl relative">
+    <div className="bg-red-400 p-6 rounded-lg w-11/12 max-w-5xl relative">
       {/* Botón cerrar */}
       <button
         onClick={() => setMostrarControlesVideo(false)}
@@ -748,7 +748,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
         </button>
         <button
           onClick={colgarLlamada}
-          className="bg-red-500 text-white px-4 py-2 rounded"
+          className="bg-red-900 text-white px-4 py-2 rounded"
         >
           Colgar llamada
         </button>
