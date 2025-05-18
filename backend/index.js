@@ -83,7 +83,16 @@ app.use("/api", rutasUsuarios);
 
 app.use(chatRoutes);
 
-
+process.on('SIGINT', () => {
+  db.end((err) => {
+    if (err) {
+      console.error('❌ Error al cerrar el pool de conexiones:', err);
+    } else {
+      console.log('✅ Pool de conexiones cerrado correctamente.');
+    }
+    process.exit();
+  });
+});
 
 //aqui abajo cambie app.listen por server.listen para lo del socket.io de actualizacion en tiempo real
 const PORT = process.env.PORT || 3001;

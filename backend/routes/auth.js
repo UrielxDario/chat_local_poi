@@ -9,8 +9,6 @@ const path = require("path");
 
 const jwt = require('jsonwebtoken');
 
-
-
 // Configurar multer//
 /*
 const storage = multer.diskStorage({
@@ -24,8 +22,6 @@ const storage = multer.diskStorage({
   },
 });
 */
-
-
 
 
 router.post("/verificar-correo", (req, res) => {
