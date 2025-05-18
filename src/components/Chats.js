@@ -432,6 +432,39 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
   };
 
 
+  const colgarLlamada = async () => {
+  // Detener cámara y micrófono
+  if (localStream.current) {
+    localStream.current.getTracks().forEach(track => track.stop());
+    localStream.current = null;
+  }
+
+  // Limpiar los elementos de video
+  if (localVideoRef.current) {
+    localVideoRef.current.srcObject = null;
+  }
+  if (remoteVideoRef.current) {
+    remoteVideoRef.current.srcObject = null;
+  }
+
+  // Cerrar la conexión WebRTC
+  if (pc) {
+    pc.close();
+  }
+
+  // Ocultar la modal
+  setMostrarControlesVideo(false);
+
+  // (Opcional) Borrar el documento de Firestore de la llamada
+  if (callId) {
+    const callDoc = doc(db, 'calls', callId);
+    await deleteDoc(callDoc);
+    setCallId('');
+  }
+};
+
+
+
 
   
 ////////PARA LA LLAMADA DE AQUI PA ARRIBA
@@ -712,6 +745,13 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
         >
           Responder llamada
         </button>
+        <button
+          onClick={colgarLlamada}
+          className="bg-red-500 text-white px-4 py-2 rounded"
+        >
+          Colgar llamada
+        </button>
+
       </div>
     </div>
   </div>
