@@ -694,7 +694,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
       {/* VENTANA MODAL PARA VIDEOLLAMADA */}
     {mostrarControlesVideo && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div className="bg-red-400 p-6 rounded-lg w-11/12 max-w-5xl relative">
+    <div className="bg-red-900 p-6 rounded-lg w-11/12 max-w-5xl relative">
       {/* Botón cerrar */}
       <button
         onClick={() => setMostrarControlesVideo(false)}
@@ -703,7 +703,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
         &times;
       </button>
 
-      <h1 className="text-xl font-bold mb-4">Videollamada</h1>
+      <h1 className="text-xl font-bold mb-4">Conexión a Espejos Mágicos</h1>
 
       <div className="flex gap-4 mb-4">
         <video
@@ -726,31 +726,31 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
           onClick={startWebcam}
           className="bg-yellow-500 text-white px-4 py-2 rounded"
         >
-          Activar cámara
+          Revelar Espejo
         </button>
         <button
           onClick={createCall}
           className="bg-orange-500 text-white px-4 py-2 rounded"
         >
-          Crear llamada
+          Crear hechizo de conexión
         </button>
         <input
           value={callId}
           onChange={(e) => setCallId(e.target.value)}
-          placeholder="ID de llamada"
+          placeholder="Clave Encantada"
           className="border px-2 py-1 rounded"
         />
         <button
           onClick={answerCall}
           className="bg-gray-300 text-white px-4 py-2 rounded"
         >
-          Responder llamada
+          Responder llamado mágico
         </button>
         <button
           onClick={colgarLlamada}
-          className="bg-red-900 text-white px-4 py-2 rounded"
+          className="bg-red-400 text-white px-4 py-2 rounded"
         >
-          Colgar llamada
+          Romper Hechizo
         </button>
 
       </div>
