@@ -70,6 +70,12 @@ const cerrarSesion = () => {
   const messagesEndRef = useRef(null);
 
   //Para la llamada
+const [mostrarControlesVideo, setMostrarControlesVideo] = useState(false);
+
+
+
+
+
     const { user } = useUser(); // acceder al usuario global
 
   const [incomingCall, setIncomingCall] = useState(null);
