@@ -12,6 +12,7 @@
     "bcryptjs": "^3.0.2",
     "bootstrap": "^5.3.3",
     "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "firebase": "^11.7.3",

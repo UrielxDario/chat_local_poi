@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import CryptoJS from "crypto-js";
 import "tailwindcss/tailwind.css";
 
 import hedwigImg from "../assets/imagenes/hedwing.jpg";
@@ -65,6 +66,7 @@ const cerrarSesion = () => {
   const [messageText, setMessageText] = useState("");
   const [messages, setMessages] = useState([]);
   const [messagesByChat, setMessagesByChat] = useState({});
+  const [usarEncriptacion, setUsarEncriptacion] = useState(false);
 
   const correoUsuario = localStorage.getItem("correo");
 
@@ -257,9 +259,28 @@ const [mensajes, setMensajes] = useState([]);
   }
 }, [messagesByChat[selectedContact?.ID_Chat]]);
 
+const claveSecreta = "clave-super-secreta"; // Puedes cambiarla por algo más seguro
+
+const encriptarMensaje = (mensaje) => {
+  return CryptoJS.AES.encrypt(mensaje, claveSecreta).toString();
+};
+
+const desencriptarMensaje = (mensajeEncriptado) => {
+  try {
+    const bytes = CryptoJS.AES.decrypt(mensajeEncriptado, claveSecreta);
+    return bytes.toString(CryptoJS.enc.Utf8);
+  } catch (e) {
+    return mensajeEncriptado; // Por si no está encriptado
+  }
+};
+
+
   const handleSendMessage = async () => {
     if (!messageText.trim() || !selectedContact) return;
-  
+    const textoFinal = usarEncriptacion
+    ? encriptarMensaje(messageText)
+    : messageText;
+
     try {
       const response = await fetch("https://poi-back-igd5.onrender.com/send-message", {
         method: "POST",
@@ -269,7 +290,7 @@ const [mensajes, setMensajes] = useState([]);
         body: JSON.stringify({
           ID_Chat: selectedContact.ID_Chat,
           ID_Usuario: currentUser.ID_Usuario,
-          TextoMensaje: messageText,
+          TextoMensaje: textoFinal,
         }),
       });
   
@@ -569,7 +590,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
               <div key={index} className={`flex mb-12 ${message.sent ? "flex-row-reverse" : ""}`}>
                 <img src={message.Avatar_Blob} className="w-10 h-10 rounded-full" alt="User avatar" />
                 <div className="bg-white rounded-lg p-4 max-w-xs shadow">
-                  <p>{message.TextoMensaje}</p> {/* Asegúrate de que message.text no esté vacío */}
+                  <p>{desencriptarMensaje( message.TextoMensaje)}</p> {/* Asegúrate de que message.text no esté vacío */}
                 </div>
               </div>  
             );
@@ -600,6 +621,16 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
                 className="px-4 py-2 border-gray-100 w-full focus:outline-none font-light ml-4"
                 placeholder="Escribe tu mensaje..."
               />
+              
+              <label className="ml-4 text-sm text-gray-800">
+              <input
+                  type="checkbox"
+                  checked={usarEncriptacion}
+                  onChange={(e) => setUsarEncriptacion(e.target.checked)}
+                  className="mr-2"
+                />
+                Encriptar mensaje
+              </label>
 
               <button
                 className="bg-red-700 text-yellow-200 rounded px-4 py-2 ml-4"
