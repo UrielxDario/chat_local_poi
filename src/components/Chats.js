@@ -268,7 +268,12 @@ const encriptarMensaje = (mensaje) => {
 const desencriptarMensaje = (mensajeEncriptado) => {
   try {
     const bytes = CryptoJS.AES.decrypt(mensajeEncriptado, claveSecreta);
-    return bytes.toString(CryptoJS.enc.Utf8);
+    const texto = bytes.toString(CryptoJS.enc.Utf8);
+
+    // Si la desencriptación falla, devuelve el mensaje original
+    if (!texto) return mensajeEncriptado;
+
+    return texto;
   } catch (e) {
     return mensajeEncriptado; // Por si no está encriptado
   }
