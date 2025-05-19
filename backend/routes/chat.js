@@ -4,10 +4,10 @@ const conexion = require('../db'); // Tu conexión a MySQL
 
 // Crear chat
 router.post('/crear-chat', async (req, res) => {
-  const { usuarios, correoUsuario } = req.body;
+  const { esGrupal, usuarios, nombreGrupo, correoUsuario} = req.body;
 
   try {
-    // 1. Obtener ID del usuario actual por correo
+    // Obtener ID del usuario actual por correo
     const [usuarioActual] = await conexion.promise().query(
       "SELECT ID_Usuario FROM usuario WHERE Correo_usu = ?",
       [correoUsuario]
@@ -39,15 +39,18 @@ router.post('/crear-chat', async (req, res) => {
 
     // 3. Crear el nuevo chat (1 a 1)
     const [nuevoChat] = await conexion.promise().query(
-      "INSERT INTO chat (EsGrupo, Fecha_Creacion) VALUES (0, NOW())"
+      "INSERT INTO chat (EsGrupo, NombreGrupo, Fecha_Creacion) VALUES (?, ?, NOW())",
+      [esGrupal ? 1 : 0, esGrupal ? nombreGrupo : null]
     );
 
     const idNuevoChat = nuevoChat.insertId;
 
     // 4. Insertar ambos usuarios como participantes
+    const todosUsuarios = [...usuarios, idActual];
+    const values = todosUsuarios.map(id => `(${idNuevoChat}, ${id})`).join(", ");
+
     await conexion.promise().query(
-      "INSERT INTO chat_usuario (ID_Chat, ID_Usuario) VALUES (?, ?), (?, ?)",
-      [idNuevoChat, idActual, idNuevoChat, idOtro]
+      `INSERT INTO chat_usuario (ID_Chat, ID_Usuario) VALUES ${values}`
     );
 
     return res.status(200).json({ mensaje: "Chat creado exitosamente", ID_Chat: idNuevoChat });
