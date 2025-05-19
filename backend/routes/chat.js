@@ -80,19 +80,21 @@ router.get('/obtener-chats', async (req, res) => {
 
     // Obtener chats donde el usuario es participante
     const [chats] = await conexion.promise().query(`
+         
         SELECT 
           c.ID_Chat,
           c.EsGrupo,
           c.NombreChat,
-          u.Username,
+          u.Username ,
           u.Avatar_Blob
         FROM chat c
         JOIN chat_usuario cu ON c.ID_Chat = cu.ID_Chat
         JOIN usuario u ON cu.ID_Usuario = u.ID_Usuario
-        WHERE cu.ID_Usuario != ? AND c.ID_Chat IN (
+        WHERE c.ID_Chat IN (
           SELECT ID_Chat FROM chat_usuario WHERE ID_Usuario = ?
         )
-        ORDER BY c.Fecha_Creacion DESC
+        GROUP BY c.ID_Chat, c.EsGrupo, c.NombreChat
+        ORDER BY c.Fecha_Creacion DESC;
     `, [idActual,idActual]);
 
     if (chats.length === 0) {
@@ -104,7 +106,7 @@ router.get('/obtener-chats', async (req, res) => {
       ID_Chat: chat.ID_Chat,
       name: chat.EsGrupo ? chat.NombreChat : chat.Username,
       img: chat.EsGrupo
-        ? "" // pon un ícono fijo o personalizado si es grupal
+        ? "/grupo.png" // pon un ícono fijo o personalizado si es grupal
         : chat.Avatar_Blob ? `data:image/jpeg;base64,${chat.Avatar_Blob.toString('base64')}` : null,
       isGroup: chat.EsGrupo === 1,
       lastMessage: 'Último mensaje...', 
