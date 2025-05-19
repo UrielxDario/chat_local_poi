@@ -513,7 +513,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
             <li><Link className="dropdown-item" to="/PerfilUsuario">Mi Perfil</Link></li> 
             <li><a className="dropdown-item" href="#">Editar Perfil</a></li>
             <li><Link className="dropdown-item" to="/tareas"> Tareas</Link></li>
-            <li><a className="dropdown-item" href="#">Recompensas</a></li>
+            <li><Link className="dropdown-item" to="/recompensas">Recompensas</Link></li>
             <li onClick={cerrarSesion} className="dropdown-item text-danger" style={{ cursor: "pointer" }}>
   Cerrar Sesión
 </li>
