@@ -80,14 +80,17 @@ router.get('/obtener-chats', async (req, res) => {
 
     // Obtener chats donde el usuario es participante
     const [chats] = await conexion.promise().query(`
-        SELECT c.ID_Chat, u.Username, u.Avatar_Blob
+        SELECT 
+          c.ID_Chat,
+          c.EsGrupo,
+          c.NombreChat,
+          u.Username,
+          u.Avatar_Blob
         FROM chat c
         JOIN chat_usuario cu ON c.ID_Chat = cu.ID_Chat
         JOIN usuario u ON cu.ID_Usuario = u.ID_Usuario
         WHERE cu.ID_Usuario != ? AND c.ID_Chat IN (
-            SELECT ID_Chat
-            FROM chat_usuario
-            WHERE ID_Usuario = ?
+          SELECT ID_Chat FROM chat_usuario WHERE ID_Usuario = ?
         )
         ORDER BY c.Fecha_Creacion DESC
     `, [idActual,idActual]);
@@ -97,17 +100,15 @@ router.get('/obtener-chats', async (req, res) => {
     }
 
     // Formatear los chats con la última información relevante
-    const formattedChats = chats.map(chat => ({
+      const formattedChats = chats.map(chat => ({
       ID_Chat: chat.ID_Chat,
-       receiver: {//Este receiver se lo agregue para la videollamada
-          name: chat.Username,
-          img: chat.Avatar_Blob ? `data:image/jpeg;base64,${chat.Avatar_Blob.toString('base64')}` : null,
-          // Puedes incluir más campos si lo deseas
-        },
-      name: chat.Username, // Aquí debes asegurarte que estás obteniendo el nombre correctamente
-      img: chat.Avatar_Blob ? `data:image/jpeg;base64,${chat.Avatar_Blob.toString('base64')}` : null, // Y la imagen del usuario
-      lastMessage: 'Último mensaje...', // Agrega lógica para obtener el último mensaje de cada chat
-      lastMessageTime: 'hora'   // Agrega lógica para mostrar la hora del último mensaje
+      name: chat.EsGrupo ? chat.NombreChat : chat.Username,
+      img: chat.EsGrupo
+        ? "" // pon un ícono fijo o personalizado si es grupal
+        : chat.Avatar_Blob ? `data:image/jpeg;base64,${chat.Avatar_Blob.toString('base64')}` : null,
+      isGroup: chat.EsGrupo === 1,
+      lastMessage: 'Último mensaje...', 
+      lastMessageTime: 'hora'
     }));
 
     return res.status(200).json({ chats: formattedChats });
