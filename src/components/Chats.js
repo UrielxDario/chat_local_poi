@@ -255,7 +255,7 @@ const [mensajes, setMensajes] = useState([]);
   
   useEffect(() => {
   if (messagesEndRef.current) {
-    messagesEndRef.current.scrollIntoView({ behavior: "auto" });
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   }
 }, [messagesByChat[selectedContact?.ID_Chat]]);
 
