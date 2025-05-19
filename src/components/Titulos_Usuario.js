@@ -9,7 +9,7 @@ const Titulos_Usuario = ({ idUsuario }) => {
   useEffect(() => {
     const fetchTitulos = async () => {
       try {
-        const res = await axios.get(`http://localhost:3001/api/titulos/${idUsuario}`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/titulos/${idUsuario}`);
         setTitulos(res.data);
       } catch (err) {
         console.error('Error cargando títulos:', err);
@@ -18,7 +18,7 @@ const Titulos_Usuario = ({ idUsuario }) => {
 
     const fetchTituloActivo = async () => {
       try {
-        const res = await axios.get(`http://localhost:3001/api/titulo-activo/${idUsuario}`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/titulo-activo/${idUsuario}`);
         setTituloActivo(res.data);
       } catch (err) {
         console.error('Error cargando título activo:', err);
@@ -32,7 +32,7 @@ const Titulos_Usuario = ({ idUsuario }) => {
   // Cambiar título activo
   const cambiarTitulo = async (idTitulo) => {
     try {
-      await axios.post('http://localhost:3001/api/cambiar-titulo', {
+      await axios.post('https://poi-back-igd5.onrender.com/api/cambiar-titulo', {
         idUsuario,
         idTitulo
       });
