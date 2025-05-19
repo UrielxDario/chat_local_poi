@@ -7,7 +7,7 @@ import Titulos_Usuario from './Titulos_Usuario';
 
 export default function PerfilUsuario ({user}) {
      const [menuOpen, setMenuOpen] = useState(false);
-   
+     //const correo = localStorage.getItem("correo");
       
   return (
     <>
@@ -48,7 +48,7 @@ export default function PerfilUsuario ({user}) {
             <span key={index} className="perfil-recompensa">{reward}</span>
         ))}
 
-        <Titulos_Usuario idUsuario={10} />
+        <Titulos_Usuario />
 
         </div>
 

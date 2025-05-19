@@ -1,46 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const Titulos_Usuario = ({ idUsuario }) => {
+const Titulos_Usuario = () => {
   const [titulos, setTitulos] = useState([]);
   const [tituloActivo, setTituloActivo] = useState(null);
-
-  // Cargar títulos desbloqueados del usuario
+  const [idUsuario, setIdUsuario] = useState(null);
+  const correo = localStorage.getItem("correo");
+  
+  // Cargar títulos y título activo
   useEffect(() => {
-    const fetchTitulos = async () => {
+    const fetchDatos = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/titulos/${idUsuario}`);
-        setTitulos(res.data);
+        // Paso 1: Obtener los títulos desbloqueados del usuario (POST)
+        const titulosRes = await axios.post(`${process.env.REACT_APP_API_URL}/api/titulos-por-correo`, {
+          correoUsuario: correo
+        });
+        setTitulos(titulosRes.data);
+
+        // Paso 2: Obtener ID del usuario (del mismo resultado)
+        if (titulosRes.data.length > 0) {
+          const idUsu = titulosRes.data[0].ID_Usuario || titulosRes.data[0].idUsuario; // por si viene incluido
+          setIdUsuario(idUsu);
+
+          // Paso 3: Obtener título activo
+          const tituloActivoRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/titulo-activo/${idUsu}`);
+          setTituloActivo(tituloActivoRes.data);
+        }
       } catch (err) {
-        console.error('Error cargando títulos:', err);
+        console.error('Error al cargar datos del usuario:', err);
       }
     };
 
-    const fetchTituloActivo = async () => {
-      try {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/titulo-activo/${idUsuario}`);
-        setTituloActivo(res.data);
-      } catch (err) {
-        console.error('Error cargando título activo:', err);
-      }
-    };
-
-    fetchTitulos();
-    fetchTituloActivo();
-  }, [idUsuario]);
+    fetchDatos();
+  }, [correo]);
 
   // Cambiar título activo
   const cambiarTitulo = async (idTitulo) => {
     try {
-      await axios.post('https://poi-back-igd5.onrender.com/api/cambiar-titulo', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/cambiar-titulo`, {
         idUsuario,
         idTitulo
       });
-      setTituloActivo(titulos.find(t => t.ID_Titulo === idTitulo));
+
+      const nuevoActivo = titulos.find(t => t.ID_Titulo === idTitulo);
+      if (nuevoActivo) {
+        setTituloActivo(nuevoActivo);
+      }
     } catch (err) {
       console.error('Error al cambiar título:', err);
     }
   };
+
 
   return (
     <div className="p-4">
@@ -57,7 +67,7 @@ const Titulos_Usuario = ({ idUsuario }) => {
             onClick={() => cambiarTitulo(titulo.ID_Titulo)}
           >
             <p>{titulo.Nombre_Titulo}</p>
-            <small className="text-gray-500">{titulo.Descripcion_Titulo}</small>
+            
           </li>
         ))}
       </ul>
