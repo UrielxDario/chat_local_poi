@@ -39,7 +39,7 @@ router.post('/crear-chat', async (req, res) => {
 
     // 3. Crear el nuevo chat (1 a 1)
     const [nuevoChat] = await conexion.promise().query(
-      "INSERT INTO chat (EsGrupo, NombreGrupo, Fecha_Creacion) VALUES (?, ?, NOW())",
+      "INSERT INTO chat (EsGrupo, NombreChat, Fecha_Creacion) VALUES (?, ?, NOW())",
       [esGrupal ? 1 : 0, esGrupal ? nombreGrupo : null]
     );
 
