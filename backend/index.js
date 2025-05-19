@@ -4,7 +4,11 @@ const db = require('./db');
 const authRoutes = require("./routes/auth");
 const rutasUsuarios = require("./routes/usuario"); 
 const chatRoutes = require("./routes/chat"); 
+<<<<<<< Updated upstream
 const tareasRoutes = require('./routes/tareasRoutes');
+=======
+const titulosRoutes = require("./routes/titulos");
+>>>>>>> Stashed changes
 
 require('dotenv').config();
 
@@ -83,6 +87,7 @@ app.use("/api", rutasUsuarios);
 
 app.use(chatRoutes);
 
+<<<<<<< Updated upstream
 process.on('SIGINT', () => {
   db.end((err) => {
     if (err) {
@@ -93,6 +98,10 @@ process.on('SIGINT', () => {
     process.exit();
   });
 });
+=======
+app.use("/api", titulosRoutes);
+
+>>>>>>> Stashed changes
 
 //aqui abajo cambie app.listen por server.listen para lo del socket.io de actualizacion en tiempo real
 const PORT = process.env.PORT || 3001;

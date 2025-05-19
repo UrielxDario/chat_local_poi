@@ -3,6 +3,7 @@ import React from 'react';
 import { Wand, Star, Shield } from "lucide-react";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import Titulos_Usuario from './Titulos_Usuario';
 
 export default function PerfilUsuario ({user}) {
      const [menuOpen, setMenuOpen] = useState(false);
@@ -46,6 +47,9 @@ export default function PerfilUsuario ({user}) {
         {user.rewards.map((reward, index) => (
             <span key={index} className="perfil-recompensa">{reward}</span>
         ))}
+
+        <Titulos_Usuario idUsuario={10} />
+
         </div>
 
         <button className="perfil-boton-mensaje">Mandar Mensaje</button>
