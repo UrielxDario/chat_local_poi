@@ -510,7 +510,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
         </button>
         {menuOpen && (
           <ul className="dropdown-menu show position-absolute bg-light">
-            <li><a className="dropdown-item" href="#">Mi Perfil</a></li>
+            <li><Link className="dropdown-item" to="/PerfilUsuario">Mi Perfil</Link></li> 
             <li><a className="dropdown-item" href="#">Editar Perfil</a></li>
             <li><Link className="dropdown-item" to="/tareas"> Tareas</Link></li>
             <li><a className="dropdown-item" href="#">Recompensas</a></li>
