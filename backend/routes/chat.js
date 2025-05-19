@@ -82,20 +82,29 @@ router.get('/obtener-chats', async (req, res) => {
     const [chats] = await conexion.promise().query(`
          
         SELECT 
-          c.ID_Chat,
-          c.EsGrupo,
-          c.NombreChat,
-          u.Username ,
-          u.Avatar_Blob
-        FROM chat c
-        JOIN chat_usuario cu ON c.ID_Chat = cu.ID_Chat
-        JOIN usuario u ON cu.ID_Usuario = u.ID_Usuario
-        WHERE c.ID_Chat IN (
-          SELECT ID_Chat FROM chat_usuario WHERE ID_Usuario = ?
-        )
-        GROUP BY c.ID_Chat, c.EsGrupo, c.NombreChat
-        ORDER BY c.Fecha_Creacion DESC;
-    `, [idActual,idActual]);
+        c.ID_Chat,
+        c.EsGrupo,
+        c.NombreChat,
+        (
+          SELECT u.Username
+          FROM chat_usuario cu2
+          JOIN usuario u ON cu2.ID_Usuario = u.ID_Usuario
+          WHERE cu2.ID_Chat = c.ID_Chat AND cu2.ID_Usuario != ?
+          LIMIT 1
+        ) AS Username,
+        (
+          SELECT u.Avatar_Blob
+          FROM chat_usuario cu2
+          JOIN usuario u ON cu2.ID_Usuario = u.ID_Usuario
+          WHERE cu2.ID_Chat = c.ID_Chat AND cu2.ID_Usuario != ?
+          LIMIT 1
+        ) AS Avatar_Blob
+      FROM chat c
+      JOIN chat_usuario cu ON c.ID_Chat = cu.ID_Chat
+      WHERE cu.ID_Usuario = ?
+      GROUP BY c.ID_Chat
+      ORDER BY c.Fecha_Creacion DESC;
+    `, [idActual,idActual,idActual]);
 
     if (chats.length === 0) {
       return res.status(200).json({ mensaje: "No tienes chats disponibles", chats: [] });
