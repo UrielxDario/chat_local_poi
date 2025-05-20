@@ -264,12 +264,13 @@ const [mensajes, setMensajes] = useState([]);
     }
   };
   
-  useEffect(() => {
+  //Esto hacia que se desplazara hacia abajo en automatico /*
+ /* useEffect(() => {
   if (messagesEndRef.current) {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   }
 }, [messagesByChat[selectedContact?.ID_Chat]]);
-
+*/
 const claveSecreta = "clave-super-secreta"; // Puedes cambiarla por algo más seguro
 
 const encriptarMensaje = (mensaje) => {
@@ -338,15 +339,7 @@ const desencriptarMensaje = (mensajeEncriptado) => {
    // Función para subir imagen a Firebase y enviar mensaje
    const fileInputRef = useRef(null);
 
-   const fileToBase64 = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-    reader.readAsDataURL(file);
-  });
-};
-
+  
 const handleImageUpload = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -383,6 +376,30 @@ const handleImageUpload = async (e) => {
 
   reader.readAsDataURL(file);
 };
+
+//Funcion para traer las imagenes de firebase y mostrarlas
+const [imagenesChat, setImagenesChat] = useState([]);
+
+useEffect(() => {
+  const obtenerImagenes = async () => {
+    if (!selectedContact?.ID_Chat) return;
+
+    const mensajesRef = collection(db, "Mensajes");
+    const q = query(
+      mensajesRef,
+      where("ID_Chat", "==", selectedContact.ID_Chat),
+      orderBy("createdAt", "asc")
+    );
+
+    const snapshot = await getDocs(q);
+    const imagenes = snapshot.docs.map(doc => doc.data());
+
+    setImagenesChat(imagenes);
+  };
+
+  obtenerImagenes();
+}, [selectedContact]);
+
 
 
 
@@ -678,7 +695,7 @@ const esImagen = message.TextoMensaje?.startsWith("data:image/");
             );
           })}
 
-           <div ref={messagesEndRef} />
+          {/* <div ref={messagesEndRef} /> ESTO HACIA QUE SE DESPLAZARA HACIA ABAJO EN AUTOMATICO */} 
           </div>
 
           {/* MessageBar */}
@@ -741,6 +758,22 @@ const esImagen = message.TextoMensaje?.startsWith("data:image/");
 
 
       </div>
+
+
+       {/* Para mostrar las fotos enviadas */}
+  <div className="bg-purple-100 w-3/12 p-4 overflow-y-auto h-screen shadow-inner border-l-4 border-purple-300">
+    <h2 className="text-xl font-bold text-purple-900 mb-4">🧙‍♂️ Galería de Recuerdos</h2>
+    <div className="grid grid-cols-1 gap-4">
+      {imagenesChat.map((img, i) => (
+        <img
+          key={i}
+          src={img.TextoMensaje}
+          alt={`Imagen ${i}`}
+          className="rounded-lg shadow-md object-cover w-full max-h-48 hover:scale-105 transition-transform duration-300"
+        />
+      ))}
+    </div>
+  </div>
     </section>
 
 
