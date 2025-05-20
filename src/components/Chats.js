@@ -333,48 +333,51 @@ const desencriptarMensaje = (mensajeEncriptado) => {
     }
   };
 
-  
+
 
    // Función para subir imagen a Firebase y enviar mensaje
    const fileInputRef = useRef(null);
 
-  const handleImageUpload = async (e) => {
+ const handleImageUpload = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
-  try {
-    const imageRef = ref(storage, `imagenesChat/${uuidv4()}_${file.name}`);
-    await uploadBytes(imageRef, file);
-    const downloadURL = await getDownloadURL(imageRef);
+  const reader = new FileReader();
+  reader.onloadend = async () => {
+    const base64String = reader.result;
 
-    await fetch("https://poi-back-igd5.onrender.com/send-message", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ID_Chat: selectedContact.ID_Chat,
-        ID_Usuario: currentUser.ID_Usuario, 
-        TextoMensaje: downloadURL,
-      }),
-    });
+    try {
+      const response = await fetch("https://poi-back-igd5.onrender.com/send-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ID_Chat: selectedContact.ID_Chat,
+          ID_Usuario: currentUser.ID_Usuario,
+          TextoMensaje: base64String, // Aquí mandas el base64
+        }),
+      });
 
-    // Actualiza mensajes localmente
-    setMessagesByChat(prev => ({
-      ...prev,
-      [selectedContact.ID_Chat]: [
-        ...(prev[selectedContact.ID_Chat] || []),
-        {
-          sent: true,
-          name: currentUser.Username,
-          text: downloadURL,
-          img: currentUser.avatar,
-          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        },
-      ],
-    }));
-  } catch (error) {
-    console.error("Error al subir imagen o enviar mensaje:", error);
-  }
+      setMessagesByChat(prev => ({
+        ...prev,
+        [selectedContact.ID_Chat]: [
+          ...(prev[selectedContact.ID_Chat] || []),
+          {
+            sent: true,
+            name: currentUser.Username,
+            text: base64String,
+            img: currentUser.avatar,
+            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          },
+        ],
+      }));
+    } catch (error) {
+      console.error("Error al enviar imagen base64:", error);
+    }
+  };
+
+  reader.readAsDataURL(file); // Esto convierte la imagen a base64
 };
+
 
 
 
@@ -645,9 +648,8 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
 
           <div className="py-6 px-20 overflow-y-auto h-3/4">{/* MENSAJES, Aqui abajo modifique todo el .map para poder subir fotos  */} 
           {mensajesActuales.map((message, index) => {
-            const esImagen =
-              message.TextoMensaje?.startsWith("http") &&
-              /\.(jpg|jpeg|png|gif|webp)$/i.test(message.TextoMensaje);
+           const esImagen = message.TextoMensaje?.startsWith("data:image");
+
 
             return (
               <div key={index} className={`flex mb-12 ${message.sent ? "flex-row-reverse" : ""}`}>
