@@ -1,19 +1,35 @@
 import "../styles/PerfilUsuario.css";
-import React from 'react';
-import { Wand, Star, Shield } from "lucide-react";
-import { useState } from "react";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { ChevronDown } from "lucide-react";
-import Titulos_Usuario from './Titulos_Usuario';
 
-export default function PerfilUsuario ({user}) {
-     const [menuOpen, setMenuOpen] = useState(false);
-     //const correo = localStorage.getItem("correo");
-      
+export default function PerfilUsuario() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [usuario, setUsuario] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const correoUsuario = localStorage.getItem("correo");
+
+  useEffect(() => {
+    if (correoUsuario) {
+      axios
+        .post(`${process.env.REACT_APP_API_URL}/api/titulos-por-correo`, { correoUsuario })
+        .then((response) => {
+          setUsuario(response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error al obtener la info del usuario:', error);
+          setLoading(false);
+        });
+    }
+  }, [correoUsuario]);
+
   return (
     <>
-     {/* Barra de Navegación */}
-     <nav className="navbar navbar-expand-lg navbar-dark shadow-sm">
-        <h1 className="navbar-brand magic-title" >
+      {/* Barra de Navegación */}
+      <nav className="navbar navbar-expand-lg navbar-dark shadow-sm">
+        <h1 className="navbar-brand magic-title">
           TheWizardingCircle
         </h1>
         <div className="dropdown">
@@ -31,42 +47,31 @@ export default function PerfilUsuario ({user}) {
           )}
         </div>
       </nav>
-      
-    <div className="perfil-usuario">
-       
 
+      {/* Perfil del Usuario */}
+      <div className="perfil-usuario">
+        {loading ? (
+          <div className="perfil-cargando">Cargando perfil...</div>
+        ) : usuario ? (
+          <div className="perfil-contenedor">
+            <img className="perfil-avatar" src={usuario.avatar} alt="Avatar del usuario" />
+            <h2 className="perfil-nombre">{usuario.username}</h2>
 
-      
-    <div className="perfil-contenedor">
-        <img className="perfil-avatar" src={user.avatar} alt="User Avatar" />
-        <h2 className="perfil-nombre">{user.name}</h2>
-        <p className="perfil-detalles">{user.house} - {user.role}</p>
-        <p className="perfil-detalles">"{user.bio} "</p>
-
-        <div className="perfil-recompensas">
-        {user.rewards.map((reward, index) => (
-            <span key={index} className="perfil-recompensa">{reward}</span>
-        ))}
-
-        <Titulos_Usuario />
-
-        </div>
-
-        <button className="perfil-boton-mensaje">Mandar Mensaje</button>
-
-        <div className="perfil-logros">
-        <h3>Logros Desbloqueados</h3>
-        <div className="perfil-iconos">
-            <Wand className="icono-logro" size={32} />
-            <Star className="icono-logro" size={32} />
-            <Shield className="icono-logro" size={32} />
-        </div>
-        </div>
-    </div>
-</div>
-</>
-
-
+            <div className="perfil-recompensas">
+              <h3 className="perfil-titulo">Títulos desbloqueados</h3>
+              {usuario.titulos.length > 0 ? (
+                usuario.titulos.map((titulo, index) => (
+                  <span key={index} className="perfil-recompensa">{titulo.Nombre_Titulo}</span>
+                ))
+              ) : (
+                <p>Este usuario aún no ha desbloqueado títulos.</p>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="perfil-error">No se pudo cargar la información del usuario.</div>
+        )}
+      </div>
+    </>
   );
-};
-
+}
