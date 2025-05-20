@@ -352,6 +352,7 @@ const handleImageUpload = async (e) => {
         ID_Chat: selectedContact.ID_Chat,
         ID_Usuario: currentUser.ID_Usuario,
         TextoMensaje: base64String, // imagen en base64
+        Avatar_Blob: currentUser.avatar,
         Username: currentUser.Username,
         sent: true,
         createdAt: new Date(),
