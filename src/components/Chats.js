@@ -393,7 +393,9 @@ useEffect(() => {
     );
 
     const snapshot = await getDocs(q);
-    const imagenes = snapshot.docs.map(doc => doc.data());
+    const imagenes = snapshot.docs
+      .map(doc => doc.data())
+      .filter(mensaje => mensaje.TextoMensaje?.startsWith("data:image/"));
 
     setImagenesChat(imagenes);
   };
@@ -763,7 +765,7 @@ const esImagen = message.TextoMensaje?.startsWith("data:image/");
 
        {/* Para mostrar las fotos enviadas */}
   <div className="bg-purple-100 w-3/12 p-4 overflow-y-auto h-screen shadow-inner border-l-4 border-purple-300">
-    <h2 className="text-xl font-bold text-purple-900 mb-4">🧙‍♂️ Galería de Recuerdos</h2>
+    <h2 className="text-xl font-bold text-purple-900 mb-4">Galería de Memorias</h2>
     <div className="grid grid-cols-1 gap-4">
       {imagenesChat.map((img, i) => (
         <img
