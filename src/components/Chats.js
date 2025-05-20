@@ -357,6 +357,9 @@ const handleImageUpload = async (e) => {
         createdAt: new Date(),
       });
 
+
+            await obtenerImagenes();
+
       setMessagesByChat(prev => ({
         ...prev,
         [selectedContact.ID_Chat]: [
@@ -381,8 +384,7 @@ const handleImageUpload = async (e) => {
 //Funcion para traer las imagenes de firebase y mostrarlas
 const [imagenesChat, setImagenesChat] = useState([]);
 
-useEffect(() => {
-  const obtenerImagenes = async () => {
+ const obtenerImagenes = async () => {
     if (!selectedContact?.ID_Chat) return;
 
     const mensajesRef = collection(db, "Mensajes");
@@ -400,6 +402,7 @@ useEffect(() => {
     setImagenesChat(imagenes);
   };
 
+useEffect(() => {
   obtenerImagenes();
 }, [selectedContact]);
 
@@ -764,17 +767,26 @@ const esImagen = message.TextoMensaje?.startsWith("data:image/");
 
 
        {/* Para mostrar las fotos enviadas */}
-  <div className="bg-purple-100 w-3/12 p-4 overflow-y-auto h-screen shadow-inner border-l-4 border-purple-300">
-    <h2 className="text-xl font-bold text-purple-900 mb-4">Galería de Memorias</h2>
+  <div className="bg-yellow-200 w-3/12 p-4 overflow-y-auto h-screen shadow-inner border-l-4 border-yellow-600">
+    <h2 className="text-xl font-bold text-red-900 mb-4">Galería de Memorias</h2>
     <div className="grid grid-cols-1 gap-4">
       {imagenesChat.map((img, i) => (
-        <img
-          key={i}
-          src={img.TextoMensaje}
-          alt={`Imagen ${i}`}
-          className="rounded-lg shadow-md object-cover w-full max-h-48 hover:scale-105 transition-transform duration-300"
-        />
+        <div key={i}>
+          <img
+            src={img.TextoMensaje}
+            alt={`Imagen ${i}`}
+            className="rounded-lg shadow-md w-full h-auto hover:scale-105 transition-transform duration-300"
+          />
+          <a
+            href={img.TextoMensaje}
+            download={`imagen-${i}.jpg`}
+            className="text-sm text-purple-700 underline block mt-1 text-center"
+          >
+            Guardar Memoria
+          </a>
+        </div>
       ))}
+
     </div>
   </div>
     </section>
