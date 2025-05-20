@@ -351,45 +351,39 @@ const handleImageUpload = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
-  try {
-    // Convierte la imagen seleccionada a base64
-    const base64String = await fileToBase64(file);
+  const reader = new FileReader();
+  reader.onloadend = async () => {
+    const base64String = reader.result;
 
-    // Convierte avatar a base64 solo si es un File, si no, usa el valor que ya tienes (puede ser URL o base64)
-    const avatarBase64 = currentUser.avatar instanceof File 
-      ? await fileToBase64(currentUser.avatar) 
-      : currentUser.avatar;
+    try {
+      await addDoc(collection(db, "Mensajes"), {
+        ID_Chat: selectedContact.ID_Chat,
+        ID_Usuario: currentUser.ID_Usuario,
+        TextoMensaje: base64String,
+        createdAt: new Date(),
+      });
 
-    // Guarda el mensaje en Firestore con las propiedades exactas que usa el render
-    await addDoc(collection(db, "Mensajes"), {
-      ID_Chat: selectedContact.ID_Chat,
-      ID_Usuario: currentUser.ID_Usuario,
-      TextoMensaje: base64String,
-      Avatar_Blob: avatarBase64,
-      Username: currentUser.Username,
-      sent: true,
-      createdAt: new Date(),
-    });
+      setMessagesByChat(prev => ({
+        ...prev,
+        [selectedContact.ID_Chat]: [
+          ...(prev[selectedContact.ID_Chat] || []),
+          {
+            sent: true,
+            name: currentUser.Username,
+            text: base64String,
+            img: currentUser.avatar, // puedes derivarlo aquí, sin guardarlo en Firestore
+            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          },
+        ],
+      }));
+    } catch (error) {
+      console.error("Error al guardar en Firestore:", error);
+    }
+  };
 
-    // Actualiza el estado local con las mismas propiedades
-    setMessagesByChat(prev => ({
-      ...prev,
-      [selectedContact.ID_Chat]: [
-        ...(prev[selectedContact.ID_Chat] || []),
-        {
-          sent: true,
-          Username: currentUser.Username,
-          TextoMensaje: base64String,
-          Avatar_Blob: avatarBase64,
-          createdAt: new Date(),
-        },
-      ],
-    }));
-
-  } catch (error) {
-    console.error("Error al guardar en Firestore:", error);
-  }
+  reader.readAsDataURL(file);
 };
+
 
 
 
