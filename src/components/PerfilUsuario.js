@@ -13,7 +13,7 @@ export default function PerfilUsuario() {
   useEffect(() => {
     if (correoUsuario) {
       axios
-        .post(`${process.env.REACT_APP_API_URL}/api/titulos-por-correo`, { correoUsuario })
+        .post(`${process.env.REACT_APP_API_URL}/api/info-usuario-por-correo`, { correoUsuario })
         .then((response) => {
           console.log("Respuesta del backend:", response.data);
           setUsuario(response.data);
