@@ -338,47 +338,56 @@ const desencriptarMensaje = (mensajeEncriptado) => {
    // Función para subir imagen a Firebase y enviar mensaje
    const fileInputRef = useRef(null);
 
+   const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+    reader.readAsDataURL(file);
+  });
+};
+
+
 const handleImageUpload = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
-  const reader = new FileReader();
-  reader.onloadend = async () => {
-    const base64String = reader.result;
+  try {
+    const base64String = await fileToBase64(file);
+    const avatarBase64 = currentUser.avatar instanceof File 
+      ? await fileToBase64(currentUser.avatar) 
+      : currentUser.avatar; // si ya tienes base64 o URL, úsalo directamente
 
-    try {
-      // GUARDAR EN FIRESTORE
-      await addDoc(collection(db, "Mensajes"), {
-        ID_Chat: selectedContact.ID_Chat,
-        ID_Usuario: currentUser.ID_Usuario,
-        TextoMensaje: base64String, // imagen en base64
-        Avatar_Blob: currentUser.avatar,
-        Username: currentUser.Username,
-        sent: true,
-        createdAt: new Date(),
-      });
+    await addDoc(collection(db, "Mensajes"), {
+      ID_Chat: selectedContact.ID_Chat,
+      ID_Usuario: currentUser.ID_Usuario,
+      TextoMensaje: base64String, // foto subida ahora en base64
+      Avatar_Blob: avatarBase64,   // avatar convertido a base64
+      Username: currentUser.Username,
+      sent: true,
+      createdAt: new Date(),
+    });
 
-      // Mostrar en frontend localmente
-      setMessagesByChat(prev => ({
-        ...prev,
-        [selectedContact.ID_Chat]: [
-          ...(prev[selectedContact.ID_Chat] || []),
-          {
-            sent: true,
-            name: currentUser.Username,
-            text: base64String,
-            img: currentUser.avatar,
-            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          },
-        ],
-      }));
-    } catch (error) {
-      console.error("Error al guardar en Firestore:", error);
-    }
-  };
+    // Actualiza el estado local para mostrar la imagen y avatar correctamente
+    setMessagesByChat(prev => ({
+      ...prev,
+      [selectedContact.ID_Chat]: [
+        ...(prev[selectedContact.ID_Chat] || []),
+        {
+          sent: true,
+          name: currentUser.Username,
+          text: base64String,
+          img: avatarBase64, // aquí sí debe ser base64 o URL
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ],
+    }));
 
-  reader.readAsDataURL(file);
+  } catch (error) {
+    console.error("Error al guardar en Firestore:", error);
+  }
 };
+
 
 
 
