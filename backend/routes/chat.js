@@ -214,39 +214,50 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
   });
 
 // Ruta para enviar un mensaje
-router.post("/send-message", (req, res) => {
-    const { ID_Chat, ID_Usuario, TextoMensaje } = req.body;
-  
-    const sql = `
-      INSERT INTO mensaje (ID_Chat, ID_Usuario, TextoMensaje)
-      VALUES (?, ?, ?)
-    `;
-  
-    conexion.query(sql, [ID_Chat, ID_Usuario, TextoMensaje], (err, result) => {
-      if (err) {
-        console.error("Error al enviar mensaje:", err);
-        return res.status(500).json({ error: "Error al enviar mensaje" });
-      }
+router.post("/send-message", async (req, res) => {
+  const { ID_Chat, ID_Usuario, TextoMensaje } = req.body;
+
+  try {
+    // Insertar el mensaje
+    const [result] = await conexion.promise().query(
+      `INSERT INTO mensaje (ID_Chat, ID_Usuario, TextoMensaje) VALUES (?, ?, ?)`,
+      [ID_Chat, ID_Usuario, TextoMensaje]
+    );
 
     const messageId = result.insertId;
 
-     conexion.query("CALL verificar_titulo_mensajes(?)", [ID_Usuario], (err2) => {
-      if (err2) {
-        console.error("Error al verificar títulos:", err2);
-        // Nota: no cortamos el flujo si esto falla, solo lo registramos
-      }
+    // Obtener el mensaje insertado
+    const [rows] = await conexion.promise().query(
+      `SELECT * FROM mensaje WHERE ID_Mensaje = ?`,
+      [messageId]
+    );
 
-    const sqlGetMessage = `SELECT * FROM mensaje WHERE ID_Mensaje = ?`;
-    conexion.query(sqlGetMessage, [messageId], (err3, rows) => {
-      if (err3) {
-        console.error("Error al obtener mensaje:", err3);
-        return res.status(500).json({ error: "Error al obtener mensaje" });
-      }
-      return res.status(200).json({ success: true, message: rows[0] });
+    // Contar los mensajes del usuario en el chat
+    const [mensajeQuery] = await conexion.promise().query(
+      `SELECT COUNT(*) AS Mensajes FROM mensaje WHERE ID_Chat = ? AND ID_Usuario = ?`,
+      [ID_Chat, ID_Usuario]
+    );
+    const cantidadMensajes = mensajeQuery[0].Mensajes;
 
-       });
-    });
-  });
+    // Si tiene 10 o más mensajes, insertar el título si no lo tiene ya
+    if (cantidadMensajes >= 10) {
+      const [tituloExistente] = await conexion.promise().query(
+        `SELECT * FROM titulo_usuario WHERE ID_Usuario = ? AND ID_Titulo = 1`,
+        [ID_Usuario]
+      );
+      if (tituloExistente.length === 0) {
+        await conexion.promise().query(
+          `INSERT INTO titulo_usuario (ID_Usuario, ID_Titulo) VALUES (?, 1)`,
+          [ID_Usuario]
+        );
+      }
+    }
+
+    return res.status(200).json({ success: true, message: rows[0] });
+  } catch (err) {
+    console.error("Error al enviar mensaje o asignar título:", err);
+    return res.status(500).json({ error: "Error al enviar mensaje o asignar título" });
+  }
 });
 
 
@@ -288,6 +299,8 @@ router.get('/obtener-receptor/:idChat/:correoUsuario', async (req, res) => {
     return res.status(500).json({ error: "Error al obtener el receptor del chat" });
   }
 });
+
+
 
 
 module.exports = router;
