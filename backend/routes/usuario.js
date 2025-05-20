@@ -121,8 +121,8 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
 router.post('/info-usuario-por-correo', (req, res) => {
   const { correoUsuario } = req.body;
 
-  db.query(
-    'SELECT ID_Usuario, Username, Avatar_usu FROM usuario WHERE Correo_usu = ?',
+  connection.query(
+    'SELECT ID_Usuario, Username, Avatar_Blob FROM usuario WHERE Correo_usu = ?',
     [correoUsuario],
     (err, usuario) => {
       if (err) {
@@ -137,7 +137,7 @@ router.post('/info-usuario-por-correo', (req, res) => {
       const usuarioInfo = usuario[0];
       const idUsuario = usuarioInfo.ID_Usuario;
 
-      db.query(
+      connection.query(
         `
         SELECT t.ID_Titulo, t.Nombre_Titulo
         FROM titulo t
@@ -152,8 +152,8 @@ router.post('/info-usuario-por-correo', (req, res) => {
           }
 
           let avatarBase64 = null;
-          if (usuarioInfo.Avatar_usu) {
-            const base64Image = usuarioInfo.Avatar_usu.toString('base64');
+          if (usuarioInfo.Avatar_Blob) {
+            const base64Image = usuarioInfo.Avatar_Blob.toString('base64');
             avatarBase64 = `data:image/png;base64,${base64Image}`;
           }
 
