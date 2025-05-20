@@ -227,15 +227,24 @@ router.post("/send-message", (req, res) => {
         console.error("Error al enviar mensaje:", err);
         return res.status(500).json({ error: "Error al enviar mensaje" });
       }
-  
+
     const messageId = result.insertId;
+
+     conexion.query("CALL verificar_titulo_mensajes(?)", [ID_Usuario], (err2) => {
+      if (err2) {
+        console.error("Error al verificar títulos:", err2);
+        // Nota: no cortamos el flujo si esto falla, solo lo registramos
+      }
+
     const sqlGetMessage = `SELECT * FROM mensaje WHERE ID_Mensaje = ?`;
-    conexion.query(sqlGetMessage, [messageId], (err, rows) => {
-      if (err) {
-        console.error("Error al obtener mensaje:", err);
+    conexion.query(sqlGetMessage, [messageId], (err3, rows) => {
+      if (err3) {
+        console.error("Error al obtener mensaje:", err3);
         return res.status(500).json({ error: "Error al obtener mensaje" });
       }
       return res.status(200).json({ success: true, message: rows[0] });
+
+       });
     });
   });
 });
