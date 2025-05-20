@@ -121,7 +121,6 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
 router.post('/info-usuario-por-correo', (req, res) => {
   const { correoUsuario } = req.body;
 
-  // Primero obtenemos el usuario con correo
   db.query(
     'SELECT ID_Usuario, Username, Avatar_usu FROM usuario WHERE Correo_usu = ?',
     [correoUsuario],
@@ -138,7 +137,6 @@ router.post('/info-usuario-por-correo', (req, res) => {
       const usuarioInfo = usuario[0];
       const idUsuario = usuarioInfo.ID_Usuario;
 
-      // Ahora obtenemos los títulos del usuario
       db.query(
         `
         SELECT t.ID_Titulo, t.Nombre_Titulo
@@ -150,22 +148,26 @@ router.post('/info-usuario-por-correo', (req, res) => {
         (err2, titulos) => {
           if (err2) {
             console.error('Error al obtener títulos:', err2);
-            return res.status(500).json({ error: 'Error al obtener títulos del usuario' });
+            // En lugar de error, devolvemos usuario sin títulos
+            return res.json({
+              idUsuario: usuarioInfo.ID_Usuario,
+              username: usuarioInfo.Username,
+              avatar: null,
+              titulos: []
+            });
           }
 
-          // Convertir el avatar a base64
           let avatarBase64 = null;
-          if (usuario.Avatar_usu) {
-            const base64Image = usuario.Avatar_usu.toString('base64');
+          if (usuarioInfo.Avatar_usu) {
+            const base64Image = usuarioInfo.Avatar_usu.toString('base64');
             avatarBase64 = `data:image/png;base64,${base64Image}`;
           }
 
-          // Respondemos con la info del usuario + sus títulos
           res.json({
             idUsuario: usuarioInfo.ID_Usuario,
             username: usuarioInfo.Username,
             avatar: avatarBase64,
-            titulos: titulos
+            titulos: titulos || []
           });
         }
       );
