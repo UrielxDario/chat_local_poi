@@ -347,38 +347,41 @@ const desencriptarMensaje = (mensajeEncriptado) => {
   });
 };
 
-
 const handleImageUpload = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
   try {
+    // Convierte la imagen seleccionada a base64
     const base64String = await fileToBase64(file);
+
+    // Convierte avatar a base64 solo si es un File, si no, usa el valor que ya tienes (puede ser URL o base64)
     const avatarBase64 = currentUser.avatar instanceof File 
       ? await fileToBase64(currentUser.avatar) 
-      : currentUser.avatar; // si ya tienes base64 o URL, úsalo directamente
+      : currentUser.avatar;
 
+    // Guarda el mensaje en Firestore con las propiedades exactas que usa el render
     await addDoc(collection(db, "Mensajes"), {
       ID_Chat: selectedContact.ID_Chat,
       ID_Usuario: currentUser.ID_Usuario,
-      TextoMensaje: base64String, // foto subida ahora en base64
-      Avatar_Blob: avatarBase64,   // avatar convertido a base64
+      TextoMensaje: base64String,
+      Avatar_Blob: avatarBase64,
       Username: currentUser.Username,
       sent: true,
       createdAt: new Date(),
     });
 
-    // Actualiza el estado local para mostrar la imagen y avatar correctamente
+    // Actualiza el estado local con las mismas propiedades
     setMessagesByChat(prev => ({
       ...prev,
       [selectedContact.ID_Chat]: [
         ...(prev[selectedContact.ID_Chat] || []),
         {
           sent: true,
-          name: currentUser.Username,
-          text: base64String,
-          img: avatarBase64, // aquí sí debe ser base64 o URL
-          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          Username: currentUser.Username,
+          TextoMensaje: base64String,
+          Avatar_Blob: avatarBase64,
+          createdAt: new Date(),
         },
       ],
     }));
@@ -387,6 +390,7 @@ const handleImageUpload = async (e) => {
     console.error("Error al guardar en Firestore:", error);
   }
 };
+
 
 
 
