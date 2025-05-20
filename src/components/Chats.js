@@ -15,12 +15,14 @@ import socket from './socket';
 import { useUser } from "../UserContext";
 import axios from "axios";
 
+
+
 //holas
 
 //ola uriel
 
 //para la llamada ahora si bien
-import { db } from '../firebase'; 
+import { db, storage } from '../firebase'; 
 import {
   collection,
   doc,
@@ -31,6 +33,11 @@ import {
   addDoc,
   deleteDoc 
 } from 'firebase/firestore';
+
+//Esto para subir fotos a firebase
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
+
 
 //Servidores stun para la llamada ahora si bien
 const servers = {
@@ -328,6 +335,57 @@ const desencriptarMensaje = (mensajeEncriptado) => {
 
 
 
+   // Función para subir imagen a Firebase y enviar mensaje
+   const fileInputRef = useRef(null);
+
+ const handleImageUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const storageRef = ref(storage, `chatImages/${Date.now()}_${file.name}`);
+
+  try {
+    // 1. Subir imagen a Firebase Storage
+    await uploadBytes(storageRef, file);
+
+    // 2. Obtener URL de descarga
+    const downloadURL = await getDownloadURL(storageRef);
+
+    // 3. Guardar mensaje en Firestore
+    await addDoc(collection(db, "Mensajes"), {
+      ID_Chat: selectedContact.ID_Chat,
+      ID_Usuario: currentUser.ID_Usuario,
+      TextoMensaje: downloadURL, //  URL de imagen 
+      Avatar_Blob: currentUser.avatar,
+      Username: currentUser.Username,
+      sent: true,
+      createdAt: new Date(),
+    });
+
+    // 4. Mostrar mensaje localmente
+    setMessagesByChat(prev => ({
+      ...prev,
+      [selectedContact.ID_Chat]: [
+        ...(prev[selectedContact.ID_Chat] || []),
+        {
+          sent: true,
+          name: currentUser.Username,
+          text: downloadURL,
+          img: currentUser.avatar,
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ],
+    }));
+
+  } catch (error) {
+    console.error("Error al subir imagen a Firebase:", error);
+  }
+};
+
+
+
+
+
 
 
 
@@ -592,18 +650,29 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
       </div>
 
 
-          <div className="py-6 px-20 overflow-y-auto h-3/4">{/* MENSAJES */}
-           {mensajesActuales.map((message , index) => {
-            console.log(message); // Esto debería mostrar el mensaje en consola
+          <div className="py-6 px-20 overflow-y-auto h-3/4">{/* MENSAJES, Aqui abajo modifique todo el .map para poder subir fotos  */} 
+          {mensajesActuales.map((message, index) => {
+const esImagen = message.TextoMensaje?.startsWith("http"); 
+
+
             return (
               <div key={index} className={`flex mb-12 ${message.sent ? "flex-row-reverse" : ""}`}>
                 <img src={message.Avatar_Blob} className="w-10 h-10 rounded-full" alt="User avatar" />
                 <div className="bg-white rounded-lg p-4 max-w-xs shadow">
-                  <p>{desencriptarMensaje( message.TextoMensaje)}</p> {/* Asegúrate de que message.text no esté vacío */}
+                  {esImagen ? (
+                    <img
+                      src={message.TextoMensaje}
+                      className="rounded max-w-full h-auto"
+                      alt="Imagen enviada"
+                    />
+                  ) : (
+                    <p>{desencriptarMensaje(message.TextoMensaje)}</p>
+                  )}
                 </div>
-              </div>  
+              </div>
             );
-           })}
+          })}
+
            <div ref={messagesEndRef} />
           </div>
 
@@ -619,9 +688,22 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
 
 
 
-              <button className="bg-red-700 text-yellow-200 rounded px-4 py-2 ml-4 mr-4">
-                <i className="fas fa-paperclip"></i>
-              </button>
+            <button
+                    className="bg-red-700 text-yellow-200 rounded px-4 py-2 ml-4 mr-4"
+                    onClick={() => fileInputRef.current.click()}
+                  >
+                    <i className="fas fa-paperclip"></i>
+            </button>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleImageUpload}
+              style={{ display: "none" }}
+            />
+
+
+
 
               <input
                 type="text"
