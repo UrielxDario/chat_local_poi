@@ -59,7 +59,7 @@ export default function PerfilUsuario() {
 
             <div className="perfil-recompensas">
               <h3 className="perfil-titulo">Títulos desbloqueados</h3>
-              {usuario.titulos.length > 0 ? (
+              {usuario.titulos && usuario.titulos.length >0?(
                 usuario.titulos.map((titulo, index) => (
                   <span key={index} className="perfil-recompensa">{titulo.Nombre_Titulo}</span>
                 ))
