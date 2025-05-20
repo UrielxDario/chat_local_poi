@@ -32,7 +32,7 @@ import {
   onSnapshot,
   addDoc,
   deleteDoc,
-  getDocs, collection, query, where, orderBy 
+  getDocs, query, where, orderBy 
 } from 'firebase/firestore';
 
 //Esto para subir fotos a firebase
