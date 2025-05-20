@@ -148,13 +148,7 @@ router.post('/info-usuario-por-correo', (req, res) => {
         (err2, titulos) => {
           if (err2) {
             console.error('Error al obtener títulos:', err2);
-            // En lugar de error, devolvemos usuario sin títulos
-            return res.json({
-              idUsuario: usuarioInfo.ID_Usuario,
-              username: usuarioInfo.Username,
-              avatar: null,
-              titulos: []
-            });
+            return res.status(500).json({ error: 'Error al obtener títulos del usuario' });
           }
 
           let avatarBase64 = null;
@@ -167,7 +161,7 @@ router.post('/info-usuario-por-correo', (req, res) => {
             idUsuario: usuarioInfo.ID_Usuario,
             username: usuarioInfo.Username,
             avatar: avatarBase64,
-            titulos: titulos || []
+            titulos: titulos
           });
         }
       );

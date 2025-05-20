@@ -15,6 +15,7 @@ export default function PerfilUsuario() {
       axios
         .post(`${process.env.REACT_APP_API_URL}/api/titulos-por-correo`, { correoUsuario })
         .then((response) => {
+          console.log("Respuesta del backend:", response.data);
           setUsuario(response.data);
           setLoading(false);
         })
