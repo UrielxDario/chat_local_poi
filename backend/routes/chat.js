@@ -213,6 +213,9 @@ router.get('/obtener-mensajes/:idChat', async (req, res) => {
     }
   });
 
+
+
+
 // Ruta para enviar un mensaje
 router.post("/send-message", async (req, res) => {
   const { ID_Chat, ID_Usuario, TextoMensaje } = req.body;
@@ -248,6 +251,32 @@ router.post("/send-message", async (req, res) => {
       if (tituloExistente.length === 0) {
         await conexion.promise().query(
           `INSERT INTO titulo_usuario (ID_Usuario, ID_Titulo) VALUES (?, 1)`,
+          [ID_Usuario]
+        );
+      }
+    }
+
+    if (cantidadMensajes >= 15) {
+      const [tituloExistente] = await conexion.promise().query(
+        `SELECT * FROM titulo_usuario WHERE ID_Usuario = ? AND ID_Titulo = 2`,
+        [ID_Usuario]
+      );
+      if (tituloExistente.length === 0) {
+        await conexion.promise().query(
+          `INSERT INTO titulo_usuario (ID_Usuario, ID_Titulo) VALUES (?, 2)`,
+          [ID_Usuario]
+        );
+      }
+    }
+
+    if (cantidadMensajes >= 20) {
+      const [tituloExistente] = await conexion.promise().query(
+        `SELECT * FROM titulo_usuario WHERE ID_Usuario = ? AND ID_Titulo = 3`,
+        [ID_Usuario]
+      );
+      if (tituloExistente.length === 0) {
+        await conexion.promise().query(
+          `INSERT INTO titulo_usuario (ID_Usuario, ID_Titulo) VALUES (?, 3)`,
           [ID_Usuario]
         );
       }
