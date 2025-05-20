@@ -342,40 +342,44 @@ const desencriptarMensaje = (mensajeEncriptado) => {
   const file = e.target.files[0];
   if (!file) return;
 
-  const reader = new FileReader();
-  reader.onloadend = async () => {
-    const base64String = reader.result;
+  const storageRef = ref(storage, `chatImages/${Date.now()}_${file.name}`);
 
-    try {
-      const response = await fetch("https://poi-back-igd5.onrender.com/send-message", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ID_Chat: selectedContact.ID_Chat,
-          ID_Usuario: currentUser.ID_Usuario,
-          TextoMensaje: base64String, // Aquí mandas el base64
-        }),
-      });
+  try {
+    // 1. Subir imagen a Firebase Storage
+    await uploadBytes(storageRef, file);
 
-      setMessagesByChat(prev => ({
-        ...prev,
-        [selectedContact.ID_Chat]: [
-          ...(prev[selectedContact.ID_Chat] || []),
-          {
-            sent: true,
-            name: currentUser.Username,
-            text: base64String,
-            img: currentUser.avatar,
-            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          },
-        ],
-      }));
-    } catch (error) {
-      console.error("Error al enviar imagen base64:", error);
-    }
-  };
+    // 2. Obtener URL de descarga
+    const downloadURL = await getDownloadURL(storageRef);
 
-  reader.readAsDataURL(file); // Esto convierte la imagen a base64
+    // 3. Guardar mensaje en Firestore
+    await addDoc(collection(db, "Mensajes"), {
+      ID_Chat: selectedContact.ID_Chat,
+      ID_Usuario: currentUser.ID_Usuario,
+      TextoMensaje: downloadURL, //  URL de imagen 
+      Avatar_Blob: currentUser.avatar,
+      Username: currentUser.Username,
+      sent: true,
+      createdAt: new Date(),
+    });
+
+    // 4. Mostrar mensaje localmente
+    setMessagesByChat(prev => ({
+      ...prev,
+      [selectedContact.ID_Chat]: [
+        ...(prev[selectedContact.ID_Chat] || []),
+        {
+          sent: true,
+          name: currentUser.Username,
+          text: downloadURL,
+          img: currentUser.avatar,
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ],
+    }));
+
+  } catch (error) {
+    console.error("Error al subir imagen a Firebase:", error);
+  }
 };
 
 
@@ -648,7 +652,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
 
           <div className="py-6 px-20 overflow-y-auto h-3/4">{/* MENSAJES, Aqui abajo modifique todo el .map para poder subir fotos  */} 
           {mensajesActuales.map((message, index) => {
-           const esImagen = message.TextoMensaje?.startsWith("data:image");
+const esImagen = message.TextoMensaje?.startsWith("http"); 
 
 
             return (
