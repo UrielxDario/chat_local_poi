@@ -53,17 +53,7 @@ function App() {
         <Route 
           path="/PerfilUsuario" 
           element={
-            <PerfilUsuario 
-              user={{
-                avatar: "https://sm.ign.com/t/ign_latam/cover/h/harry-pott/harry-potter-the-series_eh1b.300.jpg",
-                name: "Harry Potter",
-                house: "Gryffindor",
-                role: "Estudiante",
-                bio: "Soy un Gryffindor, conocido por mi valentía y lealtad, siempre dispuesto a enfrentar lo imposible por aquellos que amo, y fui el único que logró sobrevivir al ataque de Lord Voldemort cuando era un bebé",
-                rewards: ["Valentía", "Lealtad"]
-              }} 
-            />
-          } 
+            <PerfilUsuario />} 
         />
 
           {/* Editar Usuario */}
