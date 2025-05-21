@@ -1,7 +1,12 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import React from "react";
+import { useRef } from "react";
+import { ChevronDown } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import CryptoJS from "crypto-js";
+import "tailwindcss/tailwind.css";
 
 
 const PerfilUsuarioExterno = () => {
