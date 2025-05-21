@@ -238,7 +238,7 @@ const [mensajes, setMensajes] = useState([]);
         })
         .catch((err) => console.error("Error al obtener mensajes:", err));
     }
-  }, 2000); // cada 2 segundos
+  }, 1000); // cada 2 segundos
 
   return () => clearInterval(intervalo); // Limpiar el intervalo al desmontar
 }, [selectedContact]);
@@ -638,7 +638,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
                 <img src={contacts.img || "/grupo.png"} className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mr-4 border-2 border-yellow-300" alt={contacts.name} />
                 <div className="w-full overflow-hidden">
                   <div className="flex mb-1">
-                     <Link className="dropdown-item" to="/PerfilUsuario">{contacts.name}</Link> 
+<Link to={`/PerfilUsuarioExterno/${contacts.name}`}>{contacts.name}</Link>
                     <small className="font-light text-gray-300">{contacts.lastMessageTime}</small>
                   </div>
                   <small className="overflow-ellipsis overflow-hidden whitespace-nowrap block font-light text-gray-300">

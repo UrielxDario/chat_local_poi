@@ -171,4 +171,60 @@ router.post('/info-usuario-por-correo', (req, res) => {
 
 
 
+
+
+router.post('/info-usuario-por-nombre', (req, res) => {
+  const { nombreUsuario } = req.body;
+
+  connection.query(
+    'SELECT ID_Usuario, Username, Avatar_Blob FROM usuario WHERE Username = ?',
+    [nombreUsuario],
+    (err, usuario) => {
+      if (err) {
+        console.error('Error al consultar el usuario:', err);
+        return res.status(500).json({ error: 'Error al consultar el usuario' });
+      }
+
+      if (usuario.length === 0) {
+        return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+      }
+
+      const usuarioInfo = usuario[0];
+      const idUsuario = usuarioInfo.ID_Usuario;
+
+      connection.query(
+        `
+        SELECT t.ID_Titulo, t.Nombre_Titulo
+        FROM titulo t
+        JOIN titulo_usuario ut ON t.ID_Titulo = ut.ID_Titulo
+        WHERE ut.ID_Usuario = ?
+        `,
+        [idUsuario],
+        (err2, titulos) => {
+          if (err2) {
+            console.error('Error al obtener títulos:', err2);
+            return res.status(500).json({ error: 'Error al obtener títulos del usuario' });
+          }
+
+          let avatarBase64 = null;
+          if (usuarioInfo.Avatar_Blob) {
+            const base64Image = usuarioInfo.Avatar_Blob.toString('base64');
+            avatarBase64 = `data:image/png;base64,${base64Image}`;
+          }
+
+          res.json({
+            idUsuario: usuarioInfo.ID_Usuario,
+            username: usuarioInfo.Username,
+            avatar: avatarBase64,
+            titulos: titulos
+          });
+        }
+      );
+    }
+  );
+});
+
+
+
+
 module.exports = router;

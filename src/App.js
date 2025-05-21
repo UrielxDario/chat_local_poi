@@ -13,6 +13,9 @@ import Chats from "./components/Chats";
 import Tareas from "./components/Tareas";
 import LlamadaVideo from "./components/Videollamada";
 import VideoCall from './components/Videollamada';
+import PerfilUsuarioExterno from "./components/PerfilUsuarioExterno";
+
+
 
 
 function App() {
@@ -85,6 +88,10 @@ function App() {
         <Route 
         path="/stream-call/:callId" 
         element={<VideoCall />} />
+
+
+        <Route path="/PerfilUsuarioExterno/:nombre" element={<PerfilUsuarioExterno />} />
+
 
 
       </Routes>

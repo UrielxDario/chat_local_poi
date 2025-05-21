@@ -38,14 +38,16 @@ export default function PerfilUsuario() {
             Usuario <ChevronDown size={16} />
           </button>
           {menuOpen && (
-            <ul className="dropdown-menu show position-absolute bg-light">
-              <li><a className="dropdown-item" href="#">Mi Perfil</a></li>
-              <li><a className="dropdown-item" href="#">Editar Perfil</a></li>
-              <li><a className="dropdown-item" href="#">Tareas</a></li>
-              <li><a className="dropdown-item" href="#">Recompensas</a></li>
-              <li><a className="dropdown-item text-danger" href="#">Cerrar Sesión</a></li>
-            </ul>
-          )}
+                      <ul className="dropdown-menu show position-absolute bg-light">
+                        <li><a className="dropdown-item" href="#">Mi Perfil</a></li>
+                        <li><a className="dropdown-item" href="#">Editar Perfil</a></li>
+                        <li><a className="dropdown-item" href="#">Tareas</a></li>
+                        <li><a className="dropdown-item" href="#">Recompensas</a></li>
+                        <li><Link className="dropdown-item" to="/chats"> Chats</Link></li>
+                        <li><button className="dropdown-item text-danger" onClick={() => {localStorage.removeItem("correo"); 
+                        navigate("/login"); }} > Cerrar Sesión </button> </li>
+                      </ul>
+                    )}
         </div>
       </nav>
 
