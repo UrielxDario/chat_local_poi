@@ -13,6 +13,16 @@ const PerfilUsuarioExterno = () => {
   const { nombre } = useParams();
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+  
+
+    const cerrarSesion = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("correo");
+      navigate("/"); 
+    };
+    
+      const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (nombre) {
