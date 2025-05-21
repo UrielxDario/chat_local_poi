@@ -1,6 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link, useNavigate } from "react-router-dom";
+
 
 const PerfilUsuarioExterno = () => {
   const { nombre } = useParams();
@@ -24,13 +26,28 @@ const PerfilUsuarioExterno = () => {
 
   return (
     <>
-      {/* Barra de Navegación */}
-      <nav className="navbar navbar-expand-lg navbar-dark shadow-sm">
-        <h1 className="navbar-brand magic-title">TheWizardingCircle</h1>
-        <div className="dropdown">
-          <button className="btn usuario-titulo boton-magico">Usuario</button>
-        </div>
-      </nav>
+     {/* Barra de Navegación */}
+           <nav className="navbar navbar-expand-lg navbar-dark shadow-sm">
+             <h1 className="navbar-brand magic-title">
+               TheWizardingCircle
+             </h1>
+             <div className="dropdown">
+               <button className="btn usuario-titulo boton-magico" onClick={() => setMenuOpen(!menuOpen)}>
+                 Usuario <ChevronDown size={16} />
+               </button>
+               {menuOpen && (
+                           <ul className="dropdown-menu show position-absolute bg-light">
+                             <li><a className="dropdown-item" href="#">Mi Perfil</a></li>
+                             <li><a className="dropdown-item" href="#">Editar Perfil</a></li>
+                             <li><a className="dropdown-item" href="#">Tareas</a></li>
+                             <li><a className="dropdown-item" href="#">Recompensas</a></li>
+                             <li><Link className="dropdown-item" to="/chats"> Chats</Link></li>
+                             <li><button className="dropdown-item text-danger" onClick={() => {localStorage.removeItem("correo"); 
+                             navigate("/login"); }} > Cerrar Sesión </button> </li>
+                           </ul>
+                         )}
+             </div>
+           </nav>
 
       {/* Perfil del Usuario */}
       <div className="perfil-usuario">

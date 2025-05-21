@@ -2,6 +2,8 @@ import "../styles/PerfilUsuario.css";
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ChevronDown } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+
 
 export default function PerfilUsuario() {
   const [menuOpen, setMenuOpen] = useState(false);
