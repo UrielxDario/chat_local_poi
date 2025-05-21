@@ -629,6 +629,9 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
         </div>
 
         {/* Lista de contactos */}
+                   
+        {/*  <Link className="dropdown-item" to="/PerfilUsuario">{contacts.name}</Link> */}
+
         <div className="overflow-auto h-4/6">
           {contacts.length === 0 ? (
             <p>No tienes chats disponibles</p>
@@ -638,7 +641,7 @@ const mensajesActuales = selectedContact ? messagesByChat[selectedContact.ID_Cha
                 <img src={contacts.img || "/grupo.png"} className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mr-4 border-2 border-yellow-300" alt={contacts.name} />
                 <div className="w-full overflow-hidden">
                   <div className="flex mb-1">
-                    <Link className="dropdown-item" to="/PerfilUsuario">{contacts.name}</Link>
+                    <a className="flex-grow text-yellow-200 hover:text-yellow-400 transition-colors duration-200 font-medium cursor-pointer" href >{contacts.name}</a>
                     <small className="font-light text-gray-300">{contacts.lastMessageTime}</small>
                   </div>
                   <small className="overflow-ellipsis overflow-hidden whitespace-nowrap block font-light text-gray-300">
