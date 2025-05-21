@@ -10,6 +10,9 @@ export default function PerfilUsuario() {
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(true);
 
+      const navigate = useNavigate();
+  
+
   const correoUsuario = localStorage.getItem("correo");
 
   useEffect(() => {
